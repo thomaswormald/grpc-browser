@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fluxor.Blazor.Web" Version="4.2.1" />
-    <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="4.2.1" />
-    <PackageReference Include="MudBlazor" Version="6.0.2" />
+    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
   </ItemGroup>
 
 </Project>
