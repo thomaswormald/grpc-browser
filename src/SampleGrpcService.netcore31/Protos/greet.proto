@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-option csharp_namespace = "SampleGrpcService.netcore31";
+option csharp_namespace = "SampleGrpcService.netcore31.Services.ProtoFirst";
 
 package greet;
 
 // The greeting service definition.
-service Greeter {
+service ProtoFirstGreeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply);
 }

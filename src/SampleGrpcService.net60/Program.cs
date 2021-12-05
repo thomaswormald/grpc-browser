@@ -1,5 +1,7 @@
 using GrpcBrowser;
-using SampleGrpcService.net60.Services;
+using ProtoBuf.Grpc.Server;
+using SampleGrpcService.net60.Services.CodeFirst;
+using SampleGrpcService.net60.Services.ProtoFirst;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,14 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
+builder.Services.AddCodeFirstGrpc();
 builder.Services.AddGrpcBrowser();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
+app.MapGrpcService<ProtoFirstGreeterService>();
+app.MapGrpcService<CodeFirstGreeterService>();
 app.UseRouting();
 app.MapGrpcBrowser();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+app.MapGet("/", context =>
+{
+    context.Response.StatusCode = 302;
+    context.Response.Headers.Add("Location", "https://localhost:7262/grpc");
+    return Task.CompletedTask;
+});
 
 app.Run();

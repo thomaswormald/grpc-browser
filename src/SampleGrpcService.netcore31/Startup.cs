@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ProtoBuf.Grpc.Server;
+using SampleGrpcService.netcore31.Services.ProtoFirst;
+using SampleGrpcService.netcore31.Services.CodeFirst;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +21,7 @@ namespace SampleGrpcService.netcore31
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
+            services.AddCodeFirstGrpc();
             services.AddGrpcBrowser();
         }
 
@@ -35,11 +39,14 @@ namespace SampleGrpcService.netcore31
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<ProtoFirstGreeterService>();
+                endpoints.MapGrpcService<CodeFirstGreeterService>();
 
-                endpoints.MapGet("/", async context =>
+                endpoints.MapGet("/", context =>
                 {
-                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+                    context.Response.StatusCode = 302;
+                    context.Response.Headers.Add("Location", "https://localhost:5001/grpc");
+                    return Task.CompletedTask;
                 });
             });
         }
