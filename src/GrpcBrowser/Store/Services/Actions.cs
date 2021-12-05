@@ -2,6 +2,5 @@
 
 namespace GrpcBrowser.Store.Services
 {
-    public record SetCodeFirstServices(ImmutableList<CodeFirstGrpcService> Services);
-    public record SetProtoFirstServices(ImmutableList<ProtoFirstGrpcService> Services);
+    public record SetServices(ImmutableList<GrpcService> Services);
 }

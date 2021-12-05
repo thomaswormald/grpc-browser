@@ -1,0 +1,40 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<style>
+    .header-input-box {
+        max-width: 250px;
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+</style>
+
+@if (Operation is not null)
+{
+    <RequestResponseTypes Operation="@Operation" />
+
+    <div class="mt-4">Request Body</div>
+    <MudTextField T="string" Variant="Variant.Filled" Lines="5" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />
+
+    <div class="mt-2">
+        @foreach (var header in _headers)
+        {
+            <div class="d-flex flex-row">
+                <MudTextField T="string" Label="Header Key" @bind-Value="@header.Key" Class="header-input-box"/>
+                <MudTextField T="string" Label="Header Value" @bind-Value="@header.Value" Class="header-input-box"/>
+                <MudIconButton Icon="@Icons.Filled.Delete" OnClick="@(() => RemoveHeader(header))" Size="Size.Small" Class="mt-4"/>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex flex-row mt-2">
+        <MudButton OnClick="AddHeader">Add Header</MudButton>
+        <MudSpacer />
+        <MudButton OnClick="Execute">Execute</MudButton>
+    </div>
+    @if (Response is not null)
+    {
+        <div class="mt-4">Response Body</div>
+        <MudTextField T="string" Variant="Variant.Filled" Lines="5" @bind-Value="@SerializedResponse" Style="@ServiceView.jsonTextBoxStyle" />
+    }
+
+}

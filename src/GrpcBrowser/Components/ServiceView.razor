@@ -1,0 +1,145 @@
+﻿@using GrpcBrowser.Store.Services
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<style>
+    .unary-operation-panel {
+        border-color: rgba(97, 175, 254, 1);
+        background-color: rgba(234, 243, 251, 1);
+        border-style: solid
+    }
+    .unary-operation-type-text {
+        background-color: rgba(97, 175, 254, 1);
+        font-family: monospace;
+        font-weight: bold;
+        padding: 5px;
+        border-radius: 3px;
+        width: 150px;
+        text-align: center;
+        color: white
+    }
+
+    .serverstreaming-operation-panel {
+        border-color: rgba(73, 204, 144, 1);
+        background-color: rgba(73, 204, 144, .1);
+        border-style: solid
+    }
+
+    .serverstreaming-operation-type-text {
+        background-color: rgba(73, 204, 144, 1);
+        font-family: monospace;
+        font-weight: bold;
+        padding: 5px;
+        border-radius: 3px;
+        width: 150px;
+        text-align: center;
+        color: white
+    }
+
+    .clientstreaming-operation-panel {
+        border-color: rgba(89, 74, 226, 1);
+        background-color: rgba(89, 74, 226, .1);
+        border-style: solid
+    }
+
+    .clientstreaming-operation-type-text {
+        background-color: rgba(89, 74, 226, 1);
+        font-family: monospace;
+        font-weight: bold;
+        padding: 5px;
+        border-radius: 3px;
+        width: 150px;
+        text-align: center;
+        color: white
+    }
+
+    .duplex-operation-panel {
+        border-color: rgba(255, 64, 129, 1);
+        background-color: rgba(255, 64, 129, .1);
+        border-style: solid
+    }
+
+    .duplex-operation-type-text {
+        background-color: rgba(255, 64, 129, 1);
+        font-family: monospace;
+        font-weight: bold;
+        padding: 5px;
+        border-radius: 3px;
+        width: 150px;
+        text-align: center;
+        color: white
+    }
+
+    .operation-name-text {
+        font-family: monospace;
+        font-size: 16px;
+        font-weight: 600;
+        padding-top: 4px;
+        padding-left: 10px;
+    }
+</style>
+
+@if (Service is not null)
+{
+<MudExpansionPanels MultiExpansion="true" DisableBorders="true" Elevation="0">
+
+    @foreach (var endpoint in Service.Endpoints)
+    {
+        @if (endpoint.Value.Type == GrpcOperationType.Unary)
+        {
+            <MudExpansionPanel Class="unary-operation-panel mt-2">
+                <TitleContent>
+                    <div class="d-flex flex-row">
+                        <div class="unary-operation-type-text">UNARY</div>
+                        <div class="operation-name-text">@endpoint.Value.Name</div>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <UnaryOperationView Service="@Service" Operation="@endpoint.Value" />
+                </ChildContent>
+            </MudExpansionPanel>
+        }
+        else if (endpoint.Value.Type == GrpcOperationType.ServerStreaming)
+        {
+            <MudExpansionPanel Class="serverstreaming-operation-panel mt-2">
+                <TitleContent>
+                    <div class="d-flex flex-row">
+                        <div class="serverstreaming-operation-type-text">SERVER STREAMING</div>
+                        <div class="operation-name-text">@endpoint.Value.Name</div>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <ServerStreamingOperationView Service="@Service" Operation="@endpoint.Value" />
+                </ChildContent>
+            </MudExpansionPanel>
+        }
+        else if (endpoint.Value.Type == GrpcOperationType.ClientStreaming)
+        {
+            <MudExpansionPanel Class="clientstreaming-operation-panel mt-2">
+                <TitleContent>
+                    <div class="d-flex flex-row">
+                        <div class="clientstreaming-operation-type-text">CLIENT STREAMING</div>
+                        <div class="operation-name-text">@endpoint.Value.Name</div>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <ClientStreamingOperationView Service="@Service" Operation="@endpoint.Value" />
+                </ChildContent>
+            </MudExpansionPanel>
+        }
+        else if (endpoint.Value.Type == GrpcOperationType.Duplex)
+        {
+            <MudExpansionPanel Class="duplex-operation-panel mt-2">
+                <TitleContent>
+                    <div class="d-flex flex-row">
+                        <div class="duplex-operation-type-text">DUPLEX</div>
+                        <div class="operation-name-text">@endpoint.Value.Name</div>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <DuplexOperationView Service="@Service" Operation="@endpoint.Value" />
+                </ChildContent>
+            </MudExpansionPanel>
+        }
+    }
+</MudExpansionPanels>
+}

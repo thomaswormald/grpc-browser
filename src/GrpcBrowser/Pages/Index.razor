@@ -1,8 +1,51 @@
 ﻿@page "/"
+@using System.Reflection
+@using GrpcBrowser.Store.Services
+@using GrpcBrowser.Components
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<h1>Hello, world!</h1>
+<MudAppBar Color="Color.Dark" Fixed="true">
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudText Typo="Typo.h6">gRPC Browser</MudText>
+    </MudContainer>
+</MudAppBar>
 
-Welcome to your new app.
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h4" Style="font-weight: bold" Class="mt-16 pt-8">
+        @Assembly.GetEntryAssembly().GetName().Name
+    </MudText>
 
-@ServicesState.Value.CodeFirstServices.Count
+    <MudDivider DividerType="DividerType.FullWidth" Class="my-3" />
+
+
+    @if (ServicesState is not null)
+    {
+        <MudExpansionPanels MultiExpansion="true" Class="mt-3" DisableBorders="true" Elevation="0">
+            @foreach (var client in ServicesState.Value.Services)
+            {
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <div Class="d-flex flex-row ">
+                            <MudText Typo="Typo.h6" Style="font-weight: bolder">
+                                @client.Value.Name
+                            </MudText>
+                            <div class="mx-2">
+                                @if (client.Value.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+                                {
+                                    <MudChip Color="Color.Success" Size="Size.Small"><MudText Style="font-size: 10px; font-weight: bold">PROTO-FIRST</MudText></MudChip>
+                                }
+                                else if (client.Value.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+                                {
+                                    <MudChip Color="Color.Info" Size="Size.Small"><MudText Style="font-size: 10px; font-weight: bold">CODE-FIRST</MudText></MudChip>
+                                }
+                            </div>
+                        </div>
+                    </TitleContent>
+                    <ChildContent>
+                        <ServiceView Service="@client.Value" />
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+</MudContainer>

@@ -1,4 +1,5 @@
 using Fluxor;
+using GrpcBrowser.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
@@ -16,6 +17,7 @@ namespace GrpcBrowser.Configuration
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMudServices();
+            services.AddScoped<GrpcChannelUrlProvider>();
             services.AddFluxor(o => o
                 .ScanAssemblies(typeof(StartupExtensions).Assembly)
                 .UseReduxDevTools());

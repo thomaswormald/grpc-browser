@@ -71,46 +71,32 @@ namespace GrpcBrowser.Pages
             return new GrpcOperationMethod(method, type, requestMessageType, responseMessageType);
         }
 
-        private ProtoFirstGrpcService ProtoFirstServiceToGrpcService(Type serviceType)
+        private GrpcService ToGrpcService(Type serviceType, GrpcServiceImplementationType implementationType)
         {
             var methods =
                 serviceType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                     .Where(m => !m.IsConstructor)
                     .Where(m => m.GetParameters().Length <= 2)
                     .Where(m => m.GetParameters()[0].ParameterType == typeof(CallOptions) ||
-                                (m.GetParameters().Length == 2 && m.GetParameters()[1].ParameterType == typeof(CallOptions)))
-                    .Select(DetermineOperationTypeFromProtoFirstSeviceMethod)
+                                (m.GetParameters().Length == 2 &&
+                                    (m.GetParameters()[1].ParameterType == typeof(CallContext) ||
+                                     m.GetParameters()[1].ParameterType == typeof(CallOptions))))
+                    .Select(method => implementationType == GrpcServiceImplementationType.CodeFirst ? DetermineOperationFromCodeFirstService(method) : DetermineOperationFromCodeFirstService(method))
                     .GroupBy(method => method.Method.Name)
                     .Select(method => method.First())
                     .Select(operationMethod => new GrpcOperation(operationMethod.Method.Name, operationMethod.RequestMessageType, operationMethod.ResponseMessageType, operationMethod.OperationType))
                     .ToImmutableDictionary(k => k.Name, v => v);
 
-            return new ProtoFirstGrpcService(serviceType.Name, methods);
-        }
-
-        private CodeFirstGrpcService CodeFirstServiceToGrpcService(Type serviceType)
-        {
-            var methods =
-                serviceType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                    .Where(m => !m.IsConstructor)
-                    .Where(m => m.GetParameters().Length == 2)
-                    .Where(m => m.GetParameters()[1].ParameterType == typeof(CallContext))
-                    .Select(DetermineOperationFromCodeFirstService)
-                    .GroupBy(method => method.Method.Name)
-                    .Select(method => method.First())
-                    .Select(operationMethod => new GrpcOperation(operationMethod.Method.Name, operationMethod.RequestMessageType, operationMethod.ResponseMessageType, operationMethod.OperationType))
-                    .ToImmutableDictionary(k => k.Name, v => v);
-
-            return new CodeFirstGrpcService(serviceType.Name, methods);
+            return new GrpcService(serviceType.Name, methods, implementationType);
         }
 
         protected override void OnParametersSet()
         {
-            var protoFileGrpcServices = ConfiguredGrpcServices.ProtoGrpcClients.Select(ProtoFirstServiceToGrpcService).ToImmutableList();
-            Dispatcher?.Dispatch(new SetProtoFirstServices(protoFileGrpcServices));
+            var protoFileGrpcServices = ConfiguredGrpcServices.ProtoGrpcClients.Select(service => ToGrpcService(service, GrpcServiceImplementationType.ProtoFile));
 
-            var codeFirstGrpcServices = ConfiguredGrpcServices.CodeFirstGrpcServiceInterfaces.Select(CodeFirstServiceToGrpcService).ToImmutableList();
-            Dispatcher?.Dispatch(new SetCodeFirstServices(codeFirstGrpcServices));
+            var codeFirstGrpcServices = ConfiguredGrpcServices.CodeFirstGrpcServiceInterfaces.Select(service => ToGrpcService(service, GrpcServiceImplementationType.CodeFirst));
+
+            Dispatcher?.Dispatch(new SetServices(protoFileGrpcServices.Concat(codeFirstGrpcServices).ToImmutableList()));
 
             base.OnParametersSet();
         }
