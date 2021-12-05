@@ -4,12 +4,15 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	<StaticWebAssetBasePath>/grpc</StaticWebAssetBasePath>
     <OutputType>Library</OutputType>
+	<LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Fluxor.Blazor.Web" Version="4.2.1" />
     <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="4.2.1" />
+    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.40.0" />
     <PackageReference Include="MudBlazor" Version="2.0.7" />
+    <PackageReference Include="protobuf-net.Grpc" Version="1.0.152" />
   </ItemGroup>
 
 </Project>

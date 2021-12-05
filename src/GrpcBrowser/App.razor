@@ -1,5 +1,11 @@
-﻿
-<Router AppAssembly="@typeof(StartupHelpers).Assembly">
+﻿@using GrpcBrowser.Configuration
+
+<Fluxor.Blazor.Web.StoreInitializer/>
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<Router AppAssembly="@typeof(StartupExtensions).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>

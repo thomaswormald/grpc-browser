@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GrpcBrowser.Configuration;
 
 namespace SampleGrpcService.netcore31
 {
@@ -39,8 +40,8 @@ namespace SampleGrpcService.netcore31
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ProtoFirstGreeterService>();
-                endpoints.MapGrpcService<CodeFirstGreeterService>();
+                endpoints.MapGrpcService<ProtoFirstGreeterService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
+                endpoints.MapGrpcService<CodeFirstGreeterService>().AddToGrpcUiWithService<ICodeFirstGreeterService>();
 
                 endpoints.MapGet("/", context =>
                 {

@@ -1,4 +1,5 @@
 ﻿using GrpcBrowser;
+using GrpcBrowser.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -36,8 +37,8 @@ namespace SampleGrpcService.net50
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ProtoFirstGreeterService>();
-                endpoints.MapGrpcService<CodeFirstGreeterService>();
+                endpoints.MapGrpcService<ProtoFirstGreeterService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
+                endpoints.MapGrpcService<CodeFirstGreeterService>().AddToGrpcUiWithService<ICodeFirstGreeterService>();
 
                 endpoints.MapGet("/", context =>
                 {

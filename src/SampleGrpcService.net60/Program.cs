@@ -1,4 +1,4 @@
-using GrpcBrowser;
+using GrpcBrowser.Configuration;
 using ProtoBuf.Grpc.Server;
 using SampleGrpcService.net60.Services.CodeFirst;
 using SampleGrpcService.net60.Services.ProtoFirst;
@@ -16,8 +16,8 @@ builder.Services.AddGrpcBrowser();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGrpcService<ProtoFirstGreeterService>();
-app.MapGrpcService<CodeFirstGreeterService>();
+app.MapGrpcService<ProtoFirstGreeterService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
+app.MapGrpcService<CodeFirstGreeterService>().AddToGrpcUiWithService<ICodeFirstGreeterService>();
 app.UseRouting();
 app.MapGrpcBrowser();
 app.MapGet("/", context =>
