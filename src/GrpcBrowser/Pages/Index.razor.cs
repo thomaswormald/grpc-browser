@@ -73,6 +73,9 @@ namespace GrpcBrowser.Pages
 
         private GrpcService ToGrpcService(Type serviceType, GrpcServiceImplementationType implementationType)
         {
+            // There's some magic going on which causes the Async suffix to be ignored in code-first services
+            string RemoveAsyncFromCodeFirstMethodName(string methodName, GrpcServiceImplementationType implementationType) => implementationType == GrpcServiceImplementationType.CodeFirst && methodName.EndsWith("Async") ? methodName.Substring(0, methodName.Length - 5) : methodName;
+
             var methods =
                 serviceType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                     .Where(m => !m.IsConstructor)
@@ -82,9 +85,9 @@ namespace GrpcBrowser.Pages
                                     (m.GetParameters()[1].ParameterType == typeof(CallContext) ||
                                      m.GetParameters()[1].ParameterType == typeof(CallOptions))))
                     .Select(method => implementationType == GrpcServiceImplementationType.CodeFirst ? DetermineOperationFromCodeFirstService(method) : DetermineOperationFromCodeFirstService(method))
-                    .GroupBy(method => method.Method.Name)
+                    .GroupBy(method => RemoveAsyncFromCodeFirstMethodName(method.Method.Name, implementationType))
                     .Select(method => method.First())
-                    .Select(operationMethod => new GrpcOperation(operationMethod.Method.Name, operationMethod.RequestMessageType, operationMethod.ResponseMessageType, operationMethod.OperationType))
+                    .Select(operationMethod => new GrpcOperation(RemoveAsyncFromCodeFirstMethodName(operationMethod.Method.Name, implementationType), operationMethod.RequestMessageType, operationMethod.ResponseMessageType, operationMethod.OperationType))
                     .ToImmutableDictionary(k => k.Name, v => v);
 
             return new GrpcService(serviceType.Name, methods, implementationType);
