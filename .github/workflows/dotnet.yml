@@ -33,5 +33,5 @@ jobs:
         PACKAGE_NAME: GrpcBrowser
         VERSION_FILE_PATH: src/GrpcBrowser/GrpcBrowser.csproj
         VERSION_REGEX: \s*<Version>(.*)<\/Version>\s*
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        NUGET_KEY: ${{ secrets.NUGET_API_KEY }}
       
