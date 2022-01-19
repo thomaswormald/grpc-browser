@@ -5,6 +5,7 @@
 	<StaticWebAssetBasePath>/grpc</StaticWebAssetBasePath>
     <OutputType>Library</OutputType>
 	<LangVersion>10</LangVersion>
+	<IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
