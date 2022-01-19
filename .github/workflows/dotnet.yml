@@ -1,6 +1,7 @@
 name: .NET
 
 on:
+  
   push:
     branches: [ master ]
   pull_request:
@@ -28,3 +29,6 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish NuGet
       uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: GrpcBrowser/GrpcBrowser.csproj
+        PACKAGE_NAME: GrpcBrowser
