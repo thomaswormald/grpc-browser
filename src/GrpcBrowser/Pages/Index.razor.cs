@@ -84,7 +84,7 @@ namespace GrpcBrowser.Pages
                                 (m.GetParameters().Length == 2 &&
                                     (m.GetParameters()[1].ParameterType == typeof(CallContext) ||
                                      m.GetParameters()[1].ParameterType == typeof(CallOptions))))
-                    .Select(method => implementationType == GrpcServiceImplementationType.CodeFirst ? DetermineOperationFromCodeFirstService(method) : DetermineOperationFromCodeFirstService(method))
+                    .Select(method => implementationType == GrpcServiceImplementationType.CodeFirst ? DetermineOperationFromCodeFirstService(method) : DetermineOperationTypeFromProtoFirstSeviceMethod(method))
                     .GroupBy(method => RemoveAsyncFromCodeFirstMethodName(method.Method.Name, implementationType))
                     .Select(method => method.First())
                     .Select(operationMethod => new GrpcOperation(RemoveAsyncFromCodeFirstMethodName(operationMethod.Method.Name, implementationType), operationMethod.RequestMessageType, operationMethod.ResponseMessageType, operationMethod.OperationType))

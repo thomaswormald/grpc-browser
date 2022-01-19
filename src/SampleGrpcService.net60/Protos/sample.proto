@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "SampleGrpcService.net60.Services.ProtoFirst";
+
+package greet;
+
+message SampleProtoFirstRequest {
+  string content = 1;
+}
+
+message SampleProtoFirstReply {
+  string content = 1;
+}
+
+service ProtoFirstGreeter {
+  rpc UnaryOperation (SampleProtoFirstRequest) returns (SampleProtoFirstReply);
+  rpc ServerStreamingOperation (SampleProtoFirstRequest) returns (stream SampleProtoFirstReply);
+  rpc ClientStreamingOperation (stream SampleProtoFirstRequest) returns (SampleProtoFirstReply);
+  rpc DuplexStreamingOperation (stream SampleProtoFirstRequest) returns (stream SampleProtoFirstReply);
+}

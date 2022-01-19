@@ -16,7 +16,7 @@ builder.Services.AddGrpcBrowser();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGrpcService<ProtoFirstGreeterService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
+app.MapGrpcService<ProtoFirstSampleService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
 app.MapGrpcService<CodeFirstGreeterService>().AddToGrpcUiWithService<ICodeFirstGreeterService>();
 app.UseRouting();
 app.MapGrpcBrowser();

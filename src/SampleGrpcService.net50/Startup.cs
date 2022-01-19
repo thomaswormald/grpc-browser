@@ -37,7 +37,7 @@ namespace SampleGrpcService.net50
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ProtoFirstGreeterService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
+                endpoints.MapGrpcService<ProtoFirstSampleService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
                 endpoints.MapGrpcService<CodeFirstGreeterService>().AddToGrpcUiWithService<ICodeFirstGreeterService>();
 
                 endpoints.MapGet("/", context =>
