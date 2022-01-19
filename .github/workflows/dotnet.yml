@@ -33,3 +33,4 @@ jobs:
         PROJECT_FILE_PATH: src/GrpcBrowser/GrpcBrowser.csproj
         PACKAGE_NAME: GrpcBrowser
         VERSION_FILE_PATH: src/GrpcBrowser/GrpcBrowser.csproj
+        VERSION_REGEX: \s*<Version>(.*)<\/Version>\s*
