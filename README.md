@@ -32,6 +32,8 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-4. Start your service, and navigate to `/grpc` in your browser.
+4. In the `ConfigureServices` method of your Startup class, add `services.AddGrpcBrowser()`
+
+5. Start your service, and navigate to `/grpc` in your browser.
 
 
