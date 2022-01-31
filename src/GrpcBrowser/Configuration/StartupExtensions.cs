@@ -43,27 +43,14 @@ namespace GrpcBrowser.Configuration
 
         public static GrpcServiceEndpointConventionBuilder AddToGrpcUiWithClient<TClient>(this GrpcServiceEndpointConventionBuilder builder) where TClient : Grpc.Core.ClientBase<TClient>
         {
-            ConfiguredGrpcServices.ProtoGrpcClients.Add(typeof(TClient));
+            GrpcBrowser.AddProtoFirstService<TClient>();
 
             return builder;
         }
 
         public static GrpcServiceEndpointConventionBuilder AddToGrpcUiWithService<TServiceInterface>(this GrpcServiceEndpointConventionBuilder builder)
         {
-            if (!typeof(TServiceInterface).IsInterface)
-            {
-                throw new ArgumentException(
-                    $"The generic parameter to {nameof(AddToGrpcUiWithService)} must be your GRPC service's interface. '{typeof(TServiceInterface).Name}' is not an interface");
-            }
-
-            if (!typeof(TServiceInterface).IsDefined(typeof(ServiceAttribute), false) &&
-                !typeof(TServiceInterface).IsDefined(typeof(ServiceContractAttribute), false))
-            {
-                throw new ArgumentException(
-                    $"The generic parameter to {nameof(AddToGrpcUiWithService)} must be your GRPC service's interface. '{typeof(TServiceInterface).Name}' does not have the attribute '{nameof(ServiceAttribute)}' or '{nameof(ServiceContractAttribute)}', which is required for code-first GRPC services");
-            }
-
-            ConfiguredGrpcServices.CodeFirstGrpcServiceInterfaces.Add(typeof(TServiceInterface));
+            GrpcBrowser.AddCodeFirstService<TServiceInterface>();
 
             return builder;
         }
