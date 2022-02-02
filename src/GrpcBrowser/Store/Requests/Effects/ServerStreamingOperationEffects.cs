@@ -41,7 +41,7 @@ namespace GrpcBrowser.Store.Requests.Effects
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Error connecting to server streaming operation");
+                Console.Error.WriteLine("Error connecting to server streaming operation: " + ex.ToString());
             }
             finally
             {
@@ -82,7 +82,7 @@ namespace GrpcBrowser.Store.Requests.Effects
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine("Error connecting to server streaming operation"); 
+                Console.Error.WriteLine("Error connecting to server streaming operation: " + ex.ToString()); 
             }
             finally
             {

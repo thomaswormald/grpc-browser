@@ -7,6 +7,7 @@ using ProtoBuf.Grpc.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Microsoft.AspNetCore.Routing;
 
 namespace GrpcBrowser.Configuration
 {
@@ -24,7 +25,7 @@ namespace GrpcBrowser.Configuration
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void MapGrpcBrowser(this IApplicationBuilder app)
+        public static void UseGrpcBrowser(this IApplicationBuilder app)
         {
             app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/grpc"), tools =>
             {
@@ -32,23 +33,23 @@ namespace GrpcBrowser.Configuration
             });
 
             app.UseStaticFiles();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapBlazorHub("/grpc/_blazor");
-                endpoints.MapFallbackToPage("/grpc/{*path:nonfile}", "/_Host");
-                endpoints.MapFallbackToPage("/grpc", "/_Host");
-            });
         }
 
-        public static GrpcServiceEndpointConventionBuilder AddToGrpcUiWithClient<TClient>(this GrpcServiceEndpointConventionBuilder builder) where TClient : Grpc.Core.ClientBase<TClient>
+        public static void MapGrpcBrowser(this IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapBlazorHub("/grpc/_blazor");
+            endpoints.MapFallbackToPage("/grpc/{*path:nonfile}", "/_Host");
+            endpoints.MapFallbackToPage("/grpc", "/_Host");
+        }
+
+        public static GrpcServiceEndpointConventionBuilder AddToGrpcBrowserWithClient<TClient>(this GrpcServiceEndpointConventionBuilder builder) where TClient : Grpc.Core.ClientBase<TClient>
         {
             GrpcBrowser.AddProtoFirstService<TClient>();
 
             return builder;
         }
 
-        public static GrpcServiceEndpointConventionBuilder AddToGrpcUiWithService<TServiceInterface>(this GrpcServiceEndpointConventionBuilder builder)
+        public static GrpcServiceEndpointConventionBuilder AddToGrpcBrowserWithService<TServiceInterface>(this GrpcServiceEndpointConventionBuilder builder)
         {
             GrpcBrowser.AddCodeFirstService<TServiceInterface>();
 
