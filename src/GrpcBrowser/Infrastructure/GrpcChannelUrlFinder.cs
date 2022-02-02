@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 
 namespace GrpcBrowser.Infrastructure
 {
@@ -14,6 +15,8 @@ namespace GrpcBrowser.Infrastructure
             {
                 BaseUrl = BaseUrl.Substring(0, BaseUrl.Length - "/grpc/".Length);
             }
+
+            Console.WriteLine("Base URL: " + BaseUrl);
 
         }
     }

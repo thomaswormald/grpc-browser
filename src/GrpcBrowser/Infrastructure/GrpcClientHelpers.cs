@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using ProtoBuf.Grpc;
+using ProtoBuf.Grpc.Internal;
 
 namespace GrpcBrowser.Infrastructure
 {
@@ -19,6 +20,12 @@ namespace GrpcBrowser.Infrastructure
                 typeof(GrpcClient).GetMethods()
                     .Where(method => method.Name == nameof(GrpcClient.UnaryAsync))
                     .Single(method => method.GetParameters()[1].ParameterType == typeof(string));
+
+            if (responseType == typeof(Task))
+            {
+                // Handle case of Task with no return type
+                responseType = typeof(Empty);
+            }
 
             var genericMethodInfo = methodInfo.MakeGenericMethod(requestType, responseType);
 
