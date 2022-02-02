@@ -40,8 +40,8 @@ namespace SampleGrpcService.netcore31
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ProtoFirstSampleService>().AddToGrpcUiWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
-                endpoints.MapGrpcService<CodeFirstGreeterService>().AddToGrpcUiWithService<ICodeFirstGreeterService>();
+                endpoints.MapGrpcService<ProtoFirstSampleService>().AddToGrpcBrowserWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
+                endpoints.MapGrpcService<CodeFirstGreeterService>().AddToGrpcBrowserWithService<ICodeFirstGreeterService>();
                 endpoints.MapGrpcBrowser();
 
                 endpoints.MapGet("/", context =>
