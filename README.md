@@ -4,6 +4,17 @@ This project allows you to add a web-based gRPC Browser for debugging purposes t
 
 ![Test](docs/screenshots/duplex_streaming.png)
 
+## Features
+1. Allows you to view and execute gRPC services in your .NET application
+1. Supports both code-first gRPC and proto-first gRPC (with `.proto` files)
+2. Does not use gRPC reflection or gRPC web
+3. Support for all types of gRPC operation - Unary, Server Streaming, Client Streaming and Duplex
+4. Support for Metadata
+
+### Future Roadmap
+1. OAuth 2.0 support
+2. UI improvements for viewing older versions of streamed messages
+
 ## Usage
 1. Add the package `GrpcBrowser` from NuGet to your project. Your project SDK must be Microsoft.NET.Sdk.Web (see Troubleshooting for further details).
 2. In the configure method of your Startup class, add `app.UseGrpcBrowser();`
@@ -41,5 +52,10 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 ## Troubleshooting
 
+Example projects for .NET Core 3.1, .NET 5.0 and .NET 6.0 can be found in the `/src` folder.
+
 ### Error when navigating to `/grpc`
 Make sure that you service SDK type is Microsoft.NET.Sdk.Web. This is required because GrpcBrowser adds server-side Blazor to your project. In the `.csproj` file, set the Project Sdk like this: `<Project Sdk="Microsoft.NET.Sdk.Web">`
+
+## Implementation Detail
+The service reflects over the types provided to `AddToGrpcBrowserWithClient` or `AddToGrpcBrowserWithClient` in order to determine the available operations, meaning that gRPC reflection is not required. Because we use server-side Blazor, the request execution is done from the server, meaning that gRPC web is not required.
