@@ -28,6 +28,9 @@ namespace SampleGrpcService.netcore31.Services.CodeFirst
     public interface ICodeFirstGreeterService
     {
         [OperationContract]
+        Task UnaryVoidOperation(SampleCodeFirstRequest request, CallContext context = default);
+
+        [OperationContract]
         Task<SampleCodeFirstReply> UnaryOperation(SampleCodeFirstRequest request, CallContext context = default);
 
         [OperationContract]
@@ -42,6 +45,11 @@ namespace SampleGrpcService.netcore31.Services.CodeFirst
 
     public class CodeFirstGreeterService : ICodeFirstGreeterService
     {
+        public Task UnaryVoidOperation(SampleCodeFirstRequest request, CallContext context = default)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<SampleCodeFirstReply> UnaryOperation(SampleCodeFirstRequest request, CallContext context = default)
         {
             return Task.FromResult(new SampleCodeFirstReply { Content = $"Your request content was '{request.Content}'" });

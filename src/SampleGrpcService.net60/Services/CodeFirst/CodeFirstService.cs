@@ -24,6 +24,9 @@ public class SampleCodeFirstReply
 public interface ICodeFirstGreeterService
 {
     [OperationContract]
+    Task UnaryVoidOperation(SampleCodeFirstRequest request, CallContext context = default);
+
+    [OperationContract]
     Task<SampleCodeFirstReply> UnaryOperation(SampleCodeFirstRequest request, CallContext context = default);
 
     [OperationContract]
@@ -38,6 +41,11 @@ public interface ICodeFirstGreeterService
 
 public class CodeFirstGreeterService : ICodeFirstGreeterService
 {
+    public Task UnaryVoidOperation(SampleCodeFirstRequest request, CallContext context = default)
+    {
+        return Task.CompletedTask;
+    }
+
     public Task<SampleCodeFirstReply> UnaryOperation(SampleCodeFirstRequest request, CallContext context = default)
     {
         return Task.FromResult(new SampleCodeFirstReply { Content = $"Your request content was '{request.Content}'" });
