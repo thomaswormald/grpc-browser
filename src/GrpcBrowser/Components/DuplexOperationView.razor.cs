@@ -21,6 +21,7 @@ namespace GrpcBrowser.Components
         [Inject] public IState<RequestState>? RequestState { get; set; }
 
         private string _requestJson = "";
+        private int _requestTextFieldLines = 5;
         private GrpcRequestId? _requestId = null;
         private ImmutableList<HeaderViewModel> _headers = ImmutableList<HeaderViewModel>.Empty;
 
@@ -31,8 +32,8 @@ namespace GrpcBrowser.Components
             var randomInstanceOfRequestObject =
                 autoFixture.Create(Operation.RequestType, new SpecimenContext(autoFixture));
 
-
             _requestJson = JsonConvert.SerializeObject(randomInstanceOfRequestObject, Formatting.Indented);
+            _requestTextFieldLines = Math.Min(_requestJson.Split('\n').Length, App.MaxTextFieldLines);
 
             base.OnParametersSet();
         }
@@ -49,6 +50,11 @@ namespace GrpcBrowser.Components
         {
             get => JsonConvert.SerializeObject(Response?.Response, Formatting.Indented);
             set { }
+        }
+
+        private int ResponseTextFieldLines
+        {
+            get => Math.Min(SerializedResponse?.Split('\n').Length ?? 5, App.MaxTextFieldLines);
         }
 
         private void AddHeader()

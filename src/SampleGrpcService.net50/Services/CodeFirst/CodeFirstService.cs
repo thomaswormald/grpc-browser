@@ -15,6 +15,21 @@ namespace SampleGrpcService.net50.Services.CodeFirst
     {
         [DataMember(Order = 1)]
         public string Content { get; set; }
+
+        [DataMember(Order = 2)]
+        public string Content2 { get; set; }
+
+
+        [DataMember(Order = 3)]
+        public string Content3 { get; set; }
+
+
+        [DataMember(Order = 4)]
+        public string Content4 { get; set; }
+
+
+        [DataMember(Order = 5)]
+        public string Content5 { get; set; }
     }
 
     [DataContract]

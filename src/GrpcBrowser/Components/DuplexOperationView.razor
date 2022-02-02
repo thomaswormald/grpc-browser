@@ -23,7 +23,7 @@
     <RequestResponseTypes Operation="@Operation" />
 
     <div class="mt-4">Request Body</div>
-    <MudTextField T="string" Variant="Variant.Filled" Lines="5" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />
+    <MudTextField T="string" Variant="Variant.Filled" Lines="@_requestTextFieldLines" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />
 
     <div class="mt-2">
         @foreach (var header in _headers)
@@ -60,6 +60,6 @@
     @if (Response is not null)
     {
         <div class="mt-4">Response Body</div>
-        <MudTextField T="string" Variant="Variant.Filled" Lines="5" @bind-Value="@SerializedResponse" Style="@ServiceView.jsonTextBoxStyle" />
+        <MudTextField T="string" Variant="Variant.Filled" Lines="@ResponseTextFieldLines" @bind-Value="@SerializedResponse" Style="@ServiceView.jsonTextBoxStyle" />
     }
 }
