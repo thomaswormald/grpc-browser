@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "FxService.Api.Account";
+
+package account;
+
+message AccountBalanceRequest {
+  bool allCurrencies = 1;
+  repeated string currencies = 2;
+}
+
+message AccountBalanceUpdate {
+  map<string, double> currencyBalances = 1;
+  double lastUpdate = 2;
+}
+
+service AccountService {
+  rpc SubscribeAccountBalances (AccountBalanceRequest) returns (stream AccountBalanceUpdate);
+}
