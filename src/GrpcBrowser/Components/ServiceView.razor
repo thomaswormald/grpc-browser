@@ -3,9 +3,9 @@
 
 <style>
     .unary-operation-panel {
-        border-color: rgba(97, 175, 254, 1);
+        border-color: rgba(97, 175, 254, 1) !important;
         background-color: rgba(234, 243, 251, 1);
-        border-style: solid
+        border-style: solid !important
     }
     .unary-operation-type-text {
         background-color: rgba(97, 175, 254, 1);
@@ -19,9 +19,9 @@
     }
 
     .serverstreaming-operation-panel {
-        border-color: rgba(73, 204, 144, 1);
+        border-color: rgba(73, 204, 144, 1) !important;
         background-color: rgba(73, 204, 144, .1);
-        border-style: solid
+        border-style: solid !important
     }
 
     .serverstreaming-operation-type-text {
@@ -36,9 +36,9 @@
     }
 
     .clientstreaming-operation-panel {
-        border-color: rgba(89, 74, 226, 1);
+        border-color: rgba(89, 74, 226, 1) !important;
         background-color: rgba(89, 74, 226, .1);
-        border-style: solid
+        border-style: solid !important
     }
 
     .clientstreaming-operation-type-text {
@@ -53,9 +53,9 @@
     }
 
     .duplex-operation-panel {
-        border-color: rgba(255, 64, 129, 1);
+        border-color: rgba(255, 64, 129, 1) !important;
         background-color: rgba(255, 64, 129, .1);
-        border-style: solid
+        border-style: solid !important
     }
 
     .duplex-operation-type-text {
@@ -82,7 +82,7 @@
 {
 <MudExpansionPanels MultiExpansion="true" DisableBorders="true" Elevation="0">
 
-    @foreach (var endpoint in Service.Endpoints)
+    @foreach (var endpoint in Service.Endpoints.OrderBy(e => e.Key))
     {
         @if (endpoint.Value.Type == GrpcOperationType.Unary)
         {
