@@ -37,8 +37,7 @@
     </div>
 
     <div class="d-flex flex-row mt-2">
-        <MudButton OnClick="AddHeader">Add Header</MudButton>
-        <MudSpacer />
+        <MudButton OnClick="AddHeader" Class="mr-auto">Add Header</MudButton>
         @if (ConnectionState?.Connected ?? false)
         {
             <MudButton OnClick="Disconnect">Disconnect</MudButton>

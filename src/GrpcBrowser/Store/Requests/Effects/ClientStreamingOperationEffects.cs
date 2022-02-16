@@ -30,13 +30,13 @@ namespace GrpcBrowser.Store.Requests.Effects
             _channelUrlProvider = channelUrlProvider;
         }
 
-        private async Task WriteMessageToCodeFirstOperation(GrpcRequestId requestId, object request, IDispatcher dispatcher)
+        private async Task WriteMessageToCodeFirstOperation(GrpcRequestId requestId, object request, DateTimeOffset timestamp, Type requestType, IDispatcher dispatcher)
         {
             if (_openCodeFirstStreamingRequests.TryGetValue(requestId, out var openConnection))
             {
                 openConnection.RequestStream.OnNext(request);
 
-                dispatcher.Dispatch(new MessageSentToClientStreamingOperation(requestId));
+                dispatcher.Dispatch(new MessageSentToClientStreamingOperation(new GrpcRequest(timestamp, requestId, requestType, request)));
             }
         }
 
@@ -51,10 +51,10 @@ namespace GrpcBrowser.Store.Requests.Effects
 
             _openCodeFirstStreamingRequests = _openCodeFirstStreamingRequests.SetItem(action.RequestId, new CodeFirstOpenClientStreamingConnection(subject, resultTask));
 
-            await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, dispatcher);
+            await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, action.Timestamp, action.Operation.RequestType, dispatcher);
         }
 
-        private async Task WriteMessageToProtoFirstOperation(GrpcRequestId requestId, GrpcOperation operation, object request, IDispatcher dispatcher)
+        private async Task WriteMessageToProtoFirstOperation(GrpcRequestId requestId, GrpcOperation operation, DateTimeOffset timestamp, Type requestType, object request, IDispatcher dispatcher)
         {
             if (_openProtoFirstStreamingRequests.TryGetValue(requestId, out var clientStreamingCall))
             {
@@ -64,7 +64,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
                 await (Task)writeAsync.Invoke(requestStream, new[] { request });
 
-                dispatcher.Dispatch(new MessageSentToClientStreamingOperation(requestId));
+                dispatcher.Dispatch(new MessageSentToClientStreamingOperation(new GrpcRequest(timestamp, requestId, requestType, request)));
             }
         }
 
@@ -78,7 +78,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
             _openProtoFirstStreamingRequests = _openProtoFirstStreamingRequests.SetItem(action.RequestId, result);
 
-            await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, requestParameter, dispatcher);
+            await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, action.Timestamp, action.Operation.RequestType, requestParameter, dispatcher);
         }
 
         private async Task StopOpenProtoFirstOperation(GrpcRequestId requestId, GrpcOperation operation, IDispatcher dispatcher)
@@ -162,11 +162,11 @@ namespace GrpcBrowser.Store.Requests.Effects
             {
                 if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
                 {
-                    await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, requestParameter, dispatcher);
+                    await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, action.Timestamp, action.Operation.RequestType, requestParameter, dispatcher);
                 }
                 else if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
                 {
-                    await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, dispatcher);
+                    await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, action.Timestamp, action.Operation.RequestType, dispatcher);
                 }
             }
             catch (Exception ex)

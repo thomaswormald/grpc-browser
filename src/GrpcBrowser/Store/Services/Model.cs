@@ -5,7 +5,9 @@ namespace GrpcBrowser.Store.Services
 {
     public record GrpcRequestId(Guid Value);
 
-    public record GrpcResponse(DateTimeOffset TimeStamp, GrpcRequestId RequestId, Type ResponseType, object Response);
+    public record GrpcRequest(DateTimeOffset TimeStamp, GrpcRequestId RequestId, Type RequestType, object RequestBody);
+
+    public record GrpcResponse(DateTimeOffset TimeStamp, GrpcRequestId RequestId, Type ResponseType, object ResponseBody);
 
     public enum GrpcOperationType { Unary, ServerStreaming, ClientStreaming, Duplex }
 
@@ -16,4 +18,6 @@ namespace GrpcBrowser.Store.Services
     public record GrpcService(string Name, ImmutableDictionary<string, GrpcOperation> Endpoints, GrpcServiceImplementationType ImplementationType); 
     
     public record GrpcRequestHeaders(ImmutableDictionary<string, string> Values);
+    
+    public record GrpcResponseHeaders(ImmutableDictionary<string, string> Values);
 }

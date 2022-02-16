@@ -7,7 +7,7 @@ namespace GrpcBrowser.Store.Requests
     public static class Reducers
     {
         [ReducerMethod]
-        public static RequestState Reduce(RequestState state, UnaryResponseReceived action) => state with {UnaryRequests = state.UnaryRequests.SetItem(action.Response.RequestId, action.Response)};
+        public static RequestState Reduce(RequestState state, UnaryResponseReceived action) => state with {UnaryRequests = state.UnaryRequests.SetItem(action.Response.RequestId, new UnaryRequestState(action.RequestBody, action.RequestAction, action.Response))};
 
         [ReducerMethod]
         public static RequestState Reduce(RequestState state, ServerStreamingResponseReceived action)
@@ -15,7 +15,7 @@ namespace GrpcBrowser.Store.Requests
             var existingResponses =
                 state.ServerStreamingRequests.TryGetValue(action.Response.RequestId, out var existing)
                     ? existing
-                    : new ServerStreamingConnectionState(false, ImmutableList<GrpcResponse>.Empty);
+                    : new ServerStreamingConnectionState(action.RequestBody, false, action.RequestAction, ImmutableList<GrpcResponse>.Empty);
 
             var updated = existingResponses with { Responses = existingResponses.Responses.Add(action.Response), Connected = true };
 
@@ -34,10 +34,19 @@ namespace GrpcBrowser.Store.Requests
             };
 
         [ReducerMethod]
+        public static RequestState Reduce(RequestState state, CallClientStreamingOperation action) =>
+            state with
+            {
+                ClientStreamingRequests = state.ClientStreamingRequests.SetItem(action.RequestId, new ClientStreamingConnectionState(false, action.Headers, ImmutableList<GrpcRequest>.Empty, null))
+            };
+
+        [ReducerMethod]
         public static RequestState Reduce(RequestState state, MessageSentToClientStreamingOperation action) =>
             state with
             {
-                ClientStreamingRequests = state.ClientStreamingRequests.SetItem(action.RequestId, new ClientStreamingConnectionState(true, null))
+                ClientStreamingRequests = state.ClientStreamingRequests.ContainsKey(action.Request.RequestId) 
+                    ? state.ClientStreamingRequests.SetItem(action.Request.RequestId, state.ClientStreamingRequests[action.Request.RequestId] with { Connected = true, Requests = state.ClientStreamingRequests[action.Request.RequestId].Requests.Add(action.Request) })
+                    : state.ClientStreamingRequests.SetItem(action.Request.RequestId, new ClientStreamingConnectionState(true, new GrpcRequestHeaders(ImmutableDictionary<string, string>.Empty), ImmutableList<GrpcRequest>.Empty.Add(action.Request), null))
             };
 
         [ReducerMethod]

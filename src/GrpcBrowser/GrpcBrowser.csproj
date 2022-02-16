@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="BlazorDownloadFile" Version="2.3.1.1" />
     <PackageReference Include="Fluxor.Blazor.Web" Version="4.2.1" />
     <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="4.2.1" />
     <PackageReference Include="Grpc.AspNetCore.Server" Version="2.40.0" />

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Fluxor;
@@ -8,9 +7,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using GrpcBrowser.Infrastructure;
 using GrpcBrowser.Store.Services;
-using Microsoft.AspNetCore.Components;
 using ProtoBuf.Grpc;
-using ProtoBuf.Grpc.Client;
 
 namespace GrpcBrowser.Store.Requests.Effects
 {
@@ -33,8 +30,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
             await foreach (var message in result)
             {
-                dispatcher.Dispatch(new ServerStreamingResponseReceived(new GrpcResponse(DateTimeOffset.Now,
-                    action.RequestId, action.Operation.ResponseType, message)));
+                dispatcher.Dispatch(new ServerStreamingResponseReceived(requestParameter, action, new GrpcResponse(DateTimeOffset.Now, action.RequestId, action.Operation.ResponseType, message)));
             }
         }
 
@@ -62,8 +58,7 @@ namespace GrpcBrowser.Store.Requests.Effects
                 if (!endOfStream)
                 {
                     var current = responseStream.GetType().GetProperty("Current")?.GetValue(responseStream);
-                    dispatcher.Dispatch(new ServerStreamingResponseReceived(new GrpcResponse(DateTimeOffset.Now,
-                        action.RequestId, action.Operation.ResponseType, current)));
+                    dispatcher.Dispatch(new ServerStreamingResponseReceived(requestParameter, action, new GrpcResponse(DateTimeOffset.Now, action.RequestId, action.Operation.ResponseType, current)));
                 }
 
             } while (!endOfStream && !_cancellationTokens[action.RequestId].IsCancellationRequested);
@@ -94,7 +89,7 @@ namespace GrpcBrowser.Store.Requests.Effects
             }
             catch (Exception ex)
             {
-                dispatcher.Dispatch(new ServerStreamingResponseReceived(new GrpcResponse(DateTimeOffset.Now, action.RequestId, ex.GetType(), ex)));
+                dispatcher.Dispatch(new ServerStreamingResponseReceived(requestParameter, action, new GrpcResponse(DateTimeOffset.Now, action.RequestId, ex.GetType(), ex)));
                 dispatcher.Dispatch(new ServerStreamingConnectionStopped(action.RequestId));
             }
         }

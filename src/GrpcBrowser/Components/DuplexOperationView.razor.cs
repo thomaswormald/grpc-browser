@@ -48,7 +48,7 @@ namespace GrpcBrowser.Components
         // This is a hack so that I can use the MudTextField to display the response
         private string? SerializedResponse
         {
-            get => JsonConvert.SerializeObject(Response?.Response, Formatting.Indented);
+            get => JsonConvert.SerializeObject(Response?.ResponseBody, Formatting.Indented);
             set { }
         }
 
