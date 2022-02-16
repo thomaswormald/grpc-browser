@@ -58,13 +58,20 @@ namespace GrpcBrowser.Store.Requests.Effects
             var callOptions = GrpcUtils.GetCallOptions(action.Headers, CancellationToken.None);
 
 
-            if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+            try
             {
-                await InvokeCodeFirstService(channel, action, requestParameter, callOptions, dispatcher);
+                if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+                {
+                    await InvokeCodeFirstService(channel, action, requestParameter, callOptions, dispatcher);
+                }
+                else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+                {
+                    await InvokeProtoFileService(channel, action, requestParameter, callOptions, dispatcher);
+                }
             }
-            else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+            catch (Exception ex)
             {
-                await InvokeProtoFileService(channel, action, requestParameter, callOptions, dispatcher);
+                dispatcher.Dispatch(new UnaryResponseReceived(new GrpcResponse(DateTimeOffset.Now, action.RequestId, ex.GetType(), ex)));
             }
         }
     }

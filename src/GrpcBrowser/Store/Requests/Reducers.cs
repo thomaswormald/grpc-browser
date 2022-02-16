@@ -91,7 +91,7 @@ namespace GrpcBrowser.Store.Requests
                     ? existing
                     : new DuplexConnectionState(false, ImmutableList<GrpcResponse>.Empty);
 
-            var updated = existingResponses with { Responses = existingResponses.Responses.Add(action.Response), Connected = true };
+            var updated = existingResponses with { Responses = existingResponses.Responses.Add(action.Response) };
 
             return state with
             {

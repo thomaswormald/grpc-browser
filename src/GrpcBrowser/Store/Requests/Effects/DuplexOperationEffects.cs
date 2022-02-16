@@ -75,7 +75,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
                 } while (!endOfStream && !cts.IsCancellationRequested);
             }
-            catch { /* Don't care, this will throw when the cancellation token is activated */ }
+            catch (OperationCanceledException) { /* Don't care, this will throw when the cancellation token is activated */ }
             finally
             {
                 dispatcher.Dispatch(new DuplexConnectionStopped(action.RequestId));
@@ -111,7 +111,7 @@ namespace GrpcBrowser.Store.Requests.Effects
                     dispatcher.Dispatch(new DuplexResponseReceived(new GrpcResponse(DateTimeOffset.Now, action.RequestId, action.Operation.ResponseType, message)));
                 }
             }
-            catch { /* Don't care, this will throw when the cancellation token is activated */ }
+            catch (OperationCanceledException) { /* Don't care, this will throw when the cancellation token is activated */ }
             finally
             {
                 dispatcher.Dispatch(new DuplexConnectionStopped(action.RequestId));
@@ -126,13 +126,20 @@ namespace GrpcBrowser.Store.Requests.Effects
             var cts = new CancellationTokenSource();
             var callOptions = GrpcUtils.GetCallOptions(action.Headers, cts.Token);
 
-            if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+            try
             {
-                await InvokeCodeFirstService(channel, action, callOptions, dispatcher, cts);
+                if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+                {
+                    await InvokeCodeFirstService(channel, action, callOptions, dispatcher, cts);
+                }
+                else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+                {
+                    await InvokeProtoFileService(channel, action, callOptions, dispatcher, cts);
+                }
             }
-            else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+            catch (Exception ex)
             {
-                await InvokeProtoFileService(channel, action, callOptions, dispatcher, cts);
+                dispatcher.Dispatch(new DuplexResponseReceived(new GrpcResponse(DateTimeOffset.Now, action.RequestId, ex.GetType(), ex)));
             }
         }
 
@@ -141,13 +148,21 @@ namespace GrpcBrowser.Store.Requests.Effects
         {
             var requestParameter = GrpcUtils.GetRequestParameter(action.RequestParameterJson, action.Operation.RequestType);
 
-            if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+            try
             {
-                await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, dispatcher);
+                if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+                {
+                    await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, dispatcher);
+                }
+                else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+                {
+                    await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, requestParameter, dispatcher);
+                }
             }
-            else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+            catch (Exception ex)
             {
-                await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, requestParameter, dispatcher);
+                dispatcher.Dispatch(new DuplexResponseReceived(new GrpcResponse(DateTimeOffset.Now, action.RequestId, ex.GetType(), ex)));
+                dispatcher.Dispatch(new DuplexConnectionStopped(action.RequestId));
             }
         }
 
