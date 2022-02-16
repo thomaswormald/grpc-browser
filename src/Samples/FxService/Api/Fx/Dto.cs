@@ -27,7 +27,7 @@ public class FxRateUpdate
     public decimal ConversionRate { get; set; }
 
     [DataMember(Order = 4)]
-    public DateTimeOffset Timestamp { get; set; }
+    public string Timestamp { get; set; }
 }
 
 [DataContract]
@@ -42,7 +42,7 @@ public class FxOrder
     [DataMember(Order = 3)]
     public decimal MinimumAcceptableConversionRate { get; set; }
 
-    [DataMember(Order = 3)]
+    [DataMember(Order = 4)]
     public decimal AmountInFromCurrency { get; set; }
 }
 

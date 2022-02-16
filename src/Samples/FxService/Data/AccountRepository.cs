@@ -17,6 +17,7 @@ public class AccountRepository : IAccountRepository
     public AccountRepository()
     {
         _currencyBalances = new ConcurrentDictionary<string, decimal>();
+        _balanceStream = new Subject<ImmutableDictionary<string, decimal>>();
 
         _currencyBalances["USD"] = 10_000;
         _currencyBalances["GBP"] = 20_000;

@@ -11,7 +11,7 @@ message AccountBalanceRequest {
 
 message AccountBalanceUpdate {
   map<string, double> currencyBalances = 1;
-  double lastUpdate = 2;
+  string lastUpdate = 2;
 }
 
 service AccountService {

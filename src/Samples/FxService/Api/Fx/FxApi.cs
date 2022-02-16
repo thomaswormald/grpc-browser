@@ -1,7 +1,7 @@
 ﻿using ProtoBuf.Grpc;
 using ProtoBuf.Grpc.Configuration;
-using System.Reactive;
 using System.Reactive.Linq;
+
 
 [Service]
 public interface IFxApi
@@ -79,6 +79,30 @@ public class FxApi : IFxApi
 
     public IAsyncEnumerable<FxRateUpdate> StreamFxRates(IAsyncEnumerable<FxRateRequest> request, CallContext context = default)
     {
-        Observable.
+        var currencies = new HashSet<(string, string)>(new[] {("USD", "EUR"), ("USD", "GBP"), ("GBP", "EUR"), ("GBP", "USD"), ("EUR", "GBP"), ("EUR", "USD")});
+
+        request.ToObservable().Subscribe(currencyUpdate =>
+        {
+            if (currencyUpdate.Show)
+            {
+                currencies.Add((currencyUpdate.FromCurrency, currencyUpdate.ToCurrency));
+            }
+            else
+            {
+                currencies.Remove((currencyUpdate.FromCurrency, currencyUpdate.ToCurrency));
+            }
+        });
+
+        return
+            _fxRepository.FxRateObservable
+            .Where(update => currencies.Contains((update.FromCurrency, update.ToCurrency)))
+            .Select(update => new FxRateUpdate
+            {
+                FromCurrency = update.FromCurrency,
+                ToCurrency = update.ToCurrency,
+                ConversionRate = update.Rate,
+                Timestamp = DateTimeOffset.Now.ToString("o")
+            })
+            .ToAsyncEnumerable();
     }
 }

@@ -24,7 +24,7 @@ public class AccountApi: AccountService.AccountServiceBase
                     update.CurrencyBalances.Add(kvp.Key, (double)kvp.Value);
                 }
 
-                update.LastUpdate = DateTimeOffset.Now.Ticks;
+                update.LastUpdate = DateTimeOffset.Now.ToString("o");
 
                 await responseStream.WriteAsync(update);
             })
