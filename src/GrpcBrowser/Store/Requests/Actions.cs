@@ -19,8 +19,8 @@ namespace GrpcBrowser.Store.Requests
 
     public record OpenDuplexConnection(GrpcService Service, GrpcOperation Operation, GrpcRequestId RequestId, GrpcRequestHeaders Headers);
     public record DuplexConnectionOpened(GrpcRequestId RequestId);
-    public record SendMessageToConnectedDuplexOperation(GrpcRequestId RequestId, GrpcService Service, GrpcOperation Operation, string RequestParameterJson);
-    public record MessageSentToDuplexOperation(GrpcRequestId RequestId);
+    public record SendMessageToConnectedDuplexOperation(GrpcRequestId RequestId, GrpcService Service, GrpcOperation Operation, string RequestParameterJson, DateTimeOffset Timestamp);
+    public record MessageSentToDuplexOperation(GrpcRequest Request);
     public record StopDuplexOperation(GrpcRequestId RequestId, GrpcService Service, GrpcOperation Operation);
     public record DuplexResponseReceived(GrpcResponse Response);
     public record DuplexConnectionStopped(GrpcRequestId RequestId);

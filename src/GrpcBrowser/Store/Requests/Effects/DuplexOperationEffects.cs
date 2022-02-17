@@ -28,7 +28,7 @@ namespace GrpcBrowser.Store.Requests.Effects
             _channelUrlProvider = channelUrlProvider;
         }
 
-        private async Task WriteMessageToProtoFirstOperation(GrpcRequestId requestId, GrpcOperation operation, object request, IDispatcher dispatcher)
+        private async Task WriteMessageToProtoFirstOperation(GrpcRequestId requestId, GrpcOperation operation, object request, DateTimeOffset timestamp, Type requestType, IDispatcher dispatcher)
         {
             if (_openProtoConnections.TryGetValue(requestId, out var clientStreamingCall))
             {
@@ -38,7 +38,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
                 await (Task)writeAsync.Invoke(requestStream, new[] { request });
 
-                dispatcher.Dispatch(new MessageSentToDuplexOperation(requestId));
+                dispatcher.Dispatch(new MessageSentToDuplexOperation(new GrpcRequest(timestamp, requestId, requestType, request)));
             }
         }
 
@@ -82,13 +82,13 @@ namespace GrpcBrowser.Store.Requests.Effects
             }
         }
 
-        private async Task WriteMessageToCodeFirstOperation(GrpcRequestId requestId, object request, IDispatcher dispatcher)
+        private async Task WriteMessageToCodeFirstOperation(GrpcRequestId requestId, object request, DateTimeOffset timestamp, Type requestType, IDispatcher dispatcher)
         {
             if (_openCodeFirstConnections.TryGetValue(requestId, out var openConnection))
             {
                 openConnection.RequestStream.OnNext(request);
 
-                dispatcher.Dispatch(new MessageSentToDuplexOperation(requestId));
+                dispatcher.Dispatch(new MessageSentToDuplexOperation(new GrpcRequest(timestamp, requestId, requestType, request)));
             }
         }
 
@@ -152,11 +152,11 @@ namespace GrpcBrowser.Store.Requests.Effects
             {
                 if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
                 {
-                    await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, dispatcher);
+                    await WriteMessageToCodeFirstOperation(action.RequestId, requestParameter, action.Timestamp, action.Operation.RequestType, dispatcher);
                 }
                 else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
                 {
-                    await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, requestParameter, dispatcher);
+                    await WriteMessageToProtoFirstOperation(action.RequestId, action.Operation, requestParameter, action.Timestamp, action.Operation.RequestType, dispatcher);
                 }
             }
             catch (Exception ex)

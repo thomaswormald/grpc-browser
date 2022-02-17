@@ -7,7 +7,7 @@ namespace GrpcBrowser.Store.Requests
     public record UnaryRequestState(object Request, CallUnaryOperation RequestAction, GrpcResponse Response);
     public record ServerStreamingConnectionState(object Request, bool Connected, CallServerStreamingOperation RequestAction, ImmutableList<GrpcResponse> Responses);
     public record ClientStreamingConnectionState(bool Connected, GrpcRequestHeaders Headers, ImmutableList<GrpcRequest> Requests, GrpcResponse? Response);
-    public record DuplexConnectionState(bool Connected, ImmutableList<GrpcResponse> Responses);
+    public record DuplexConnectionState(bool Connected, GrpcRequestHeaders Headers, ImmutableList<GrpcRequest> Requests, ImmutableList<GrpcResponse> Responses);
 
     public record RequestState(
         ImmutableDictionary<GrpcRequestId, UnaryRequestState?> UnaryRequests,
