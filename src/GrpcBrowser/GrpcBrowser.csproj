@@ -6,12 +6,13 @@
     <OutputType>Library</OutputType>
 	<LangVersion>10</LangVersion>
 	<IsPackable>true</IsPackable>
-	<Version>1.1.1</Version>
+	<Version>1.2.0</Version>
 	<Authors>Thomas Wormald</Authors>
 	<Description>Extends your application with a web UI for browsing and executing gRPC operations</Description>
 	<PackageTags>grpc;browser;rpc;</PackageTags>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<RepositoryUrl>https://github.com/thomaswormald/grpc-browser</RepositoryUrl>
+	<PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +31,7 @@
   <ItemGroup>
     <Folder Include="Components\" />
     <Folder Include="Store\Requests\" />
+    <None Include="icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
