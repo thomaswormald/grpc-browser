@@ -26,8 +26,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
             var result = await client.UnaryAsync(requestParameter, action.Operation.Name, action.Operation.RequestType, action.Operation.ResponseType, context);
 
-            dispatcher.Dispatch(new UnaryResponseReceived(new GrpcResponse(DateTimeOffset.Now, action.RequestId,
-                action.Operation.ResponseType, result)));
+            dispatcher.Dispatch(new UnaryResponseReceived(requestParameter, action, new GrpcResponse(DateTimeOffset.Now, action.RequestId, action.Operation.ResponseType, result)));
         }
 
         private static async Task InvokeProtoFileService(GrpcChannel channel, CallUnaryOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
@@ -44,8 +43,7 @@ namespace GrpcBrowser.Store.Requests.Effects
                 result = resultProperty.GetValue(resultTask);
             }
 
-            dispatcher.Dispatch(new UnaryResponseReceived(new GrpcResponse(DateTimeOffset.Now, action.RequestId,
-                action.Operation.ResponseType, result)));
+            dispatcher.Dispatch(new UnaryResponseReceived(requestParameter, action, new GrpcResponse(DateTimeOffset.Now, action.RequestId, action.Operation.ResponseType, result)));
         }
 
         [EffectMethod]
@@ -58,13 +56,20 @@ namespace GrpcBrowser.Store.Requests.Effects
             var callOptions = GrpcUtils.GetCallOptions(action.Headers, CancellationToken.None);
 
 
-            if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+            try
             {
-                await InvokeCodeFirstService(channel, action, requestParameter, callOptions, dispatcher);
+                if (action.Service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
+                {
+                    await InvokeCodeFirstService(channel, action, requestParameter, callOptions, dispatcher);
+                }
+                else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+                {
+                    await InvokeProtoFileService(channel, action, requestParameter, callOptions, dispatcher);
+                }
             }
-            else if (action.Service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
+            catch (Exception ex)
             {
-                await InvokeProtoFileService(channel, action, requestParameter, callOptions, dispatcher);
+                dispatcher.Dispatch(new UnaryResponseReceived(requestParameter, action, new GrpcResponse(DateTimeOffset.Now, action.RequestId, ex.GetType(), ex)));
             }
         }
     }

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using Microsoft.AspNetCore.Routing;
+using BlazorDownloadFile;
 
 namespace GrpcBrowser.Configuration
 {
@@ -22,6 +23,7 @@ namespace GrpcBrowser.Configuration
             services.AddFluxor(o => o
                 .ScanAssemblies(typeof(StartupExtensions).Assembly)
                 .UseReduxDevTools());
+            services.AddBlazorDownloadFile(ServiceLifetime.Scoped);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,10 +1,10 @@
 ﻿{
   "profiles": {
-    "SampleGrpcService": {
+    "FxService": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:5134;https://localhost:7134",
+      "applicationUrl": "http://localhost:5068;https://localhost:7068",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

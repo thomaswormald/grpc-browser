@@ -37,8 +37,7 @@
     </div>
 
     <div class="d-flex flex-row mt-2">
-        <MudButton OnClick="AddHeader">Add Header</MudButton>
-        <MudSpacer />
+        <MudButton OnClick="AddHeader" Class="mr-auto">Add Header</MudButton>
         @if (ConnectionState?.Connected ?? false)
         {
             <MudButton OnClick="Disconnect">Disconnect</MudButton>
@@ -59,7 +58,12 @@
 
     @if (Response is not null)
     {
-        <div class="mt-4">Response Body</div>
+        <div class="d-flex flex-row">
+            <div class="mt-4 mr-auto">Response Body</div>
+            <MudTooltip Text="Download">
+                <MudIconButton Icon="@Icons.Material.Filled.FileDownload" Size="@Size.Small" Class="mt-2" OnClick="@Download">Download Response</MudIconButton>
+            </MudTooltip>
+        </div>
         <MudTextField T="string" Variant="Variant.Filled" Lines="@ResponseTextFieldLines" @bind-Value="@SerializedResponse" Style="@ServiceView.jsonTextBoxStyle" />
     }
 }

@@ -19,6 +19,7 @@ var app = builder.Build();
 app.MapGrpcService<ProtoFirstSampleService>().AddToGrpcBrowserWithClient<ProtoFirstGreeter.ProtoFirstGreeterClient>();
 app.MapGrpcService<CodeFirstGreeterService>().AddToGrpcBrowserWithService<ICodeFirstGreeterService>();
 app.UseRouting();
+app.UseGrpcBrowser();
 app.MapGrpcBrowser();
 app.MapGet("/", context =>
 {

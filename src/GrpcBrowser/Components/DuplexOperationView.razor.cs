@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.Kernel;
+using BlazorDownloadFile;
 using Fluxor;
 using GrpcBrowser.Store.Requests;
 using GrpcBrowser.Store.Services;
@@ -19,6 +20,7 @@ namespace GrpcBrowser.Components
         [Parameter] public GrpcService? Service { get; set; }
         [Parameter] public GrpcOperation? Operation { get; set; }
         [Inject] public IState<RequestState>? RequestState { get; set; }
+        [Inject] IBlazorDownloadFileService BlazorDownloadFileService { get; set; }
 
         private string _requestJson = "";
         private int _requestTextFieldLines = 5;
@@ -40,7 +42,7 @@ namespace GrpcBrowser.Components
 
         private void SendMessage()
         {
-            Dispatcher?.Dispatch(new SendMessageToConnectedDuplexOperation(_requestId, Service, Operation, _requestJson));
+            Dispatcher?.Dispatch(new SendMessageToConnectedDuplexOperation(_requestId, Service, Operation, _requestJson, DateTimeOffset.Now));
         }
 
         private GrpcResponse? Response => ConnectionState?.Responses.LastOrDefault();
@@ -48,7 +50,7 @@ namespace GrpcBrowser.Components
         // This is a hack so that I can use the MudTextField to display the response
         private string? SerializedResponse
         {
-            get => JsonConvert.SerializeObject(Response?.Response, Formatting.Indented);
+            get => JsonConvert.SerializeObject(Response?.ResponseBody, Formatting.Indented);
             set { }
         }
 
@@ -83,5 +85,32 @@ namespace GrpcBrowser.Components
             RequestState!.Value.DuplexRequests.TryGetValue(_requestId, out var streamingState)
                 ? streamingState
                 : null;
+
+        record DownloadedDuplexOperationInformation(string Service, string Operation);
+        record DownloadedDuplexConnectionInformation(ImmutableDictionary<string, string> Headers);
+        record DownloadedDuplexMessage(DateTimeOffset Timestamp, string Direction, object Body);
+        record DownloadedDuplexResponse(DateTimeOffset TimeStamp, object Body);
+        record DownloadedDuplexDocument(DownloadedDuplexOperationInformation Operation, DownloadedDuplexConnectionInformation Connection, ImmutableList<DownloadedDuplexMessage> Messages);
+
+        private async Task Download()
+        {
+            var operation = new DownloadedDuplexOperationInformation(
+                Service.Name,
+                Operation.Name);
+
+            var connection = new DownloadedDuplexConnectionInformation(ConnectionState.Headers.Values);
+
+            var requests =
+                ConnectionState.Requests.Select(request => new DownloadedDuplexMessage(request.TimeStamp, "ClientToServer", request.RequestBody));
+
+            var responses =
+                ConnectionState.Responses.Select(response => new DownloadedDuplexMessage(response.TimeStamp, "ServerToClient", response.ResponseBody));
+
+            var document = new DownloadedDuplexDocument(operation, connection, requests.Concat(responses).OrderBy(r => r.Timestamp).ToImmutableList());
+
+            var documentJson = JsonConvert.SerializeObject(document, Formatting.Indented);
+
+            await BlazorDownloadFileService.DownloadFileFromText($"{Operation.Name}-{DateTimeOffset.Now.Ticks}.json", documentJson, Encoding.UTF8, "text/plain", false);
+        }
     }
 }

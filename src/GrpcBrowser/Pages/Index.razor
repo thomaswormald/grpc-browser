@@ -21,7 +21,7 @@
     @if (ServicesState is not null)
     {
         <MudExpansionPanels MultiExpansion="true" Class="mt-3" DisableBorders="true" Elevation="0">
-            @foreach (var client in ServicesState.Value.Services)
+            @foreach (var client in ServicesState.Value.Services.OrderBy(c => c.Key))
             {
                 <MudExpansionPanel>
                     <TitleContent>

@@ -4,12 +4,13 @@ using GrpcBrowser.Store.Services;
 
 namespace GrpcBrowser.Store.Requests
 {
-    public record ServerStreamingConnectionState(bool Connected, ImmutableList<GrpcResponse> Responses);
-    public record ClientStreamingConnectionState(bool Connected, GrpcResponse? Response);
-    public record DuplexConnectionState(bool Connected, ImmutableList<GrpcResponse> Responses);
+    public record UnaryRequestState(object Request, CallUnaryOperation RequestAction, GrpcResponse Response);
+    public record ServerStreamingConnectionState(object Request, bool Connected, CallServerStreamingOperation RequestAction, ImmutableList<GrpcResponse> Responses);
+    public record ClientStreamingConnectionState(bool Connected, GrpcRequestHeaders Headers, ImmutableList<GrpcRequest> Requests, GrpcResponse? Response);
+    public record DuplexConnectionState(bool Connected, GrpcRequestHeaders Headers, ImmutableList<GrpcRequest> Requests, ImmutableList<GrpcResponse> Responses);
 
     public record RequestState(
-        ImmutableDictionary<GrpcRequestId, GrpcResponse?> UnaryRequests,
+        ImmutableDictionary<GrpcRequestId, UnaryRequestState?> UnaryRequests,
         ImmutableDictionary<GrpcRequestId, ServerStreamingConnectionState> ServerStreamingRequests,
         ImmutableDictionary<GrpcRequestId, ClientStreamingConnectionState> ClientStreamingRequests,
         ImmutableDictionary<GrpcRequestId, DuplexConnectionState> DuplexRequests);
@@ -20,7 +21,7 @@ namespace GrpcBrowser.Store.Requests
 
         protected override RequestState GetInitialState() => 
             new RequestState(
-                ImmutableDictionary<GrpcRequestId, GrpcResponse?>.Empty,
+                ImmutableDictionary<GrpcRequestId, UnaryRequestState?>.Empty,
                 ImmutableDictionary<GrpcRequestId, ServerStreamingConnectionState>.Empty,
                 ImmutableDictionary<GrpcRequestId, ClientStreamingConnectionState>.Empty, 
                 ImmutableDictionary<GrpcRequestId, DuplexConnectionState>.Empty);

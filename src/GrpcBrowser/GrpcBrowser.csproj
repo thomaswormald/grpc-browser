@@ -6,11 +6,18 @@
     <OutputType>Library</OutputType>
 	<LangVersion>10</LangVersion>
 	<IsPackable>true</IsPackable>
-	<Version>1.1.1</Version>
+	<Version>1.2.0</Version>
+	<Authors>Thomas Wormald</Authors>
+	<Description>Extends your application with a web UI for browsing and executing gRPC operations</Description>
+	<PackageTags>grpc;browser;rpc;</PackageTags>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<RepositoryUrl>https://github.com/thomaswormald/grpc-browser</RepositoryUrl>
+	<PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="BlazorDownloadFile" Version="2.3.1.1" />
     <PackageReference Include="Fluxor.Blazor.Web" Version="4.2.1" />
     <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="4.2.1" />
     <PackageReference Include="Grpc.AspNetCore.Server" Version="2.40.0" />
@@ -24,6 +31,7 @@
   <ItemGroup>
     <Folder Include="Components\" />
     <Folder Include="Store\Requests\" />
+    <None Include="icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>

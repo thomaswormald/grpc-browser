@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.Kernel;
+using BlazorDownloadFile;
 using Fluxor;
 using GrpcBrowser.Store.Requests;
 using GrpcBrowser.Store.Services;
@@ -19,6 +21,7 @@ namespace GrpcBrowser.Components
         [Parameter] public GrpcService? Service { get; set; }
         [Parameter] public GrpcOperation? Operation { get; set; }
         [Inject] public IState<RequestState>? RequestState { get; set; }
+        [Inject] IBlazorDownloadFileService BlazorDownloadFileService { get; set; }
 
         private string _requestJson = "";
         private int _requestTextFieldLines = 5;
@@ -41,7 +44,7 @@ namespace GrpcBrowser.Components
         private void Connect()
         {
             _requestId ??= new GrpcRequestId(Guid.NewGuid());
-            Dispatcher?.Dispatch(new CallServerStreamingOperation(Service, Operation, _requestJson, _requestId, new GrpcRequestHeaders(_headers.ToImmutableDictionary(h => h.Key, h => h.Value))));
+            Dispatcher?.Dispatch(new CallServerStreamingOperation(Service, Operation, _requestJson, _requestId, new GrpcRequestHeaders(_headers.ToImmutableDictionary(h => h.Key, h => h.Value)), DateTimeOffset.Now));
         }
 
         private GrpcResponse? Response => ConnectionState?.Responses.LastOrDefault();
@@ -49,7 +52,7 @@ namespace GrpcBrowser.Components
         // This is a hack so that I can use the MudTextField to display the response
         private string? SerializedResponse
         {
-            get => JsonConvert.SerializeObject(Response?.Response, Formatting.Indented);
+            get => JsonConvert.SerializeObject(Response?.ResponseBody, Formatting.Indented);
             set { }
         }
 
@@ -78,5 +81,31 @@ namespace GrpcBrowser.Components
             RequestState!.Value.ServerStreamingRequests.TryGetValue(_requestId, out var streamingState)
                 ? streamingState
                 : null;
+
+        record DownloadedServerStreamingOperationInformation(string Service, string Operation);
+        record DownloadedServerStreamingResponse(DateTimeOffset TimeStamp, object ResponseBody);
+        record DownloadedServerStreamingRequest(DateTimeOffset Timestamp, ImmutableDictionary<string, string> Headers, object Body);
+        record DownloadedServerStreamingDocument(DownloadedServerStreamingOperationInformation Operation, DownloadedServerStreamingRequest Request, ImmutableList<DownloadedServerStreamingResponse> Responses);
+
+        private async Task Download()
+        {
+            var operation = new DownloadedServerStreamingOperationInformation(
+                ConnectionState.RequestAction.Service.Name,
+                ConnectionState.RequestAction.Operation.Name);
+
+            var request = new DownloadedServerStreamingRequest(
+                ConnectionState.RequestAction.Timestamp,
+                ConnectionState.RequestAction.Headers.Values,
+                ConnectionState.Request);
+
+            var responses = ConnectionState!.Responses.Select(response => new DownloadedServerStreamingResponse(response.TimeStamp, response.ResponseBody)).OrderBy(r => r.TimeStamp).ToImmutableList();
+
+            var document = new DownloadedServerStreamingDocument(operation, request, responses);
+
+
+            var documentJson = JsonConvert.SerializeObject(document, Formatting.Indented);
+
+            await BlazorDownloadFileService.DownloadFileFromText($"{ConnectionState.RequestAction.Operation.Name}-{ConnectionState.RequestAction.Timestamp.Ticks}.json", documentJson, Encoding.UTF8, "text/plain", false);
+        }
     }
 }
