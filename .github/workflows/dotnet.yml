@@ -28,9 +28,6 @@ jobs:
       run: dotnet test --no-build --verbosity normal
   publish:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src
     steps:
     - name: Publish NuGet
       if: github.ref == 'refs/heads/master'
