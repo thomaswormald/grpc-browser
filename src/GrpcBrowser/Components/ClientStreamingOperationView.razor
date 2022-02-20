@@ -21,8 +21,13 @@
 @if (Operation is not null)
 {
     <RequestResponseTypes Operation="@Operation" />
-
-    <div class="mt-4">Request Body</div>
+    
+    <div class="d-flex flex-row">
+        <div class="mt-4 mr-auto">Request Body</div>
+        <div class="mt-2">
+            <Pagination NumberOfMessages="@(ConnectionState?.Requests.Count ?? 0)" @bind-SelectedMessage="@DisplayedRequestNumber" ShowLatestOnNewMessage="@true" />
+        </div>
+    </div>
     <MudTextField T="string" Variant="Variant.Filled" Lines="@_requestTextFieldLines" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />
 
     <div class="mt-2">

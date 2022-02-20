@@ -1,0 +1,70 @@
+﻿<MudIconButton Icon="@Icons.Material.Filled.FirstPage" Size="@Size.Small" OnClick="@ShowFirst" />
+<MudIconButton Icon="@Icons.Material.Filled.NavigateBefore" Size="@Size.Small" OnClick="@ShowPrevious" Disabled="@PreviousMessageButtonDisabled" />
+<MudText Style="margin-top: 2px !important" Typo="@Typo.overline">@SelectedMessage / @NumberOfMessages</MudText>
+<MudIconButton Icon="@Icons.Material.Filled.NavigateNext" Size="@Size.Small" OnClick="@ShowNext" Disabled="@NextMessageButtonDisabled" />
+<MudIconButton Icon="@Icons.Material.Filled.LastPage" Size="@Size.Small"W OnClick="@ShowLatest" Disabled="@LatestMessageButtonDisabled" />
+
+@code {
+    private int _lastNumberOfMessages = 0;
+    [Parameter] public int NumberOfMessages { get; set; } = 0;
+    [Parameter] public int SelectedMessage { get; set; } = 1;
+    [Parameter] public EventCallback<int> SelectedMessageChanged { get; set; }
+    [Parameter] public bool ShowLatestOnNewMessage { get; set; } = false;
+    private bool _showingLatestResponse = true;
+
+    private bool PreviousMessageButtonDisabled => SelectedMessage <= 1;
+    private bool NextMessageButtonDisabled => SelectedMessage >= NumberOfMessages;
+    private bool LatestMessageButtonDisabled => _showingLatestResponse;
+    private async Task ShowFirst()
+    {
+        SelectedMessage = 1;
+        await SelectedMessageChanged.InvokeAsync(SelectedMessage);
+        _showingLatestResponse = false;
+        StateHasChanged();
+    }
+    private async Task ShowLatest()
+    {
+        SelectedMessage = NumberOfMessages;
+        await SelectedMessageChanged.InvokeAsync(SelectedMessage);
+        _showingLatestResponse = true;
+        StateHasChanged();
+    }
+    private async Task ShowPrevious()
+    {
+        SelectedMessage--;
+        await SelectedMessageChanged.InvokeAsync(SelectedMessage);
+        _showingLatestResponse = false;
+        StateHasChanged();
+    }
+    private async Task ShowNext()
+    {
+        SelectedMessage++;
+        await SelectedMessageChanged.InvokeAsync(SelectedMessage);
+        _showingLatestResponse = false;
+        StateHasChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_showingLatestResponse && SelectedMessage != NumberOfMessages)
+        {
+            SelectedMessage = NumberOfMessages;
+            await SelectedMessageChanged.InvokeAsync(SelectedMessage);
+        }
+
+        if (ShowLatestOnNewMessage && NumberOfMessages > _lastNumberOfMessages)
+        {
+            SelectedMessage = NumberOfMessages;
+            await SelectedMessageChanged.InvokeAsync(SelectedMessage);
+        }
+
+        _lastNumberOfMessages = NumberOfMessages;
+
+        if (SelectedMessage > NumberOfMessages)
+        {
+            SelectedMessage = NumberOfMessages;
+        }
+
+        StateHasChanged();
+    }
+}

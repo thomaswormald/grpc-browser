@@ -26,6 +26,22 @@ namespace GrpcBrowser.Components
         private int _requestTextFieldLines = 5;
         private GrpcRequestId? _requestId = null;
         private ImmutableList<HeaderViewModel> _headers = ImmutableList<HeaderViewModel>.Empty;
+        private int _displayedResponseNumber = 1;
+
+        private int DisplayedRequestNumber
+        {
+            get => _displayedRequestNumber;
+            set
+            {
+                _displayedRequestNumber = value;
+                _requestJson =
+                    ConnectionState?.Requests[_displayedRequestNumber - 1] is null
+                        ? _requestJson
+                        : JsonConvert.SerializeObject(ConnectionState?.Requests[_displayedRequestNumber - 1].RequestBody, Formatting.Indented);
+                StateHasChanged();
+            }
+        }
+        private int _displayedRequestNumber = 1;
 
         protected override void OnParametersSet()
         {
@@ -45,7 +61,7 @@ namespace GrpcBrowser.Components
             Dispatcher?.Dispatch(new SendMessageToConnectedDuplexOperation(_requestId, Service, Operation, _requestJson, DateTimeOffset.Now));
         }
 
-        private GrpcResponse? Response => ConnectionState?.Responses.LastOrDefault();
+        private GrpcResponse? Response => ConnectionState?.Responses.Count >= _displayedResponseNumber ? ConnectionState?.Responses[_displayedResponseNumber - 1] : null;
 
         // This is a hack so that I can use the MudTextField to display the response
         private string? SerializedResponse
