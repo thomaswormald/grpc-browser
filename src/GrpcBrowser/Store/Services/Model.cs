@@ -15,7 +15,7 @@ namespace GrpcBrowser.Store.Services
 
     public enum GrpcServiceImplementationType { CodeFirst, ProtoFile }
 
-    public record GrpcService(string Name, ImmutableDictionary<string, GrpcOperation> Endpoints, GrpcServiceImplementationType ImplementationType); 
+    public record GrpcService(Type ServiceType, ImmutableDictionary<string, GrpcOperation> Endpoints, GrpcServiceImplementationType ImplementationType); 
     
     public record GrpcRequestHeaders(ImmutableDictionary<string, string> Values);
     

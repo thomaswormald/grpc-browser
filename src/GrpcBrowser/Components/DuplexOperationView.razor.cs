@@ -111,7 +111,7 @@ namespace GrpcBrowser.Components
         private async Task Download()
         {
             var operation = new DownloadedDuplexOperationInformation(
-                Service.Name,
+                Service.ServiceType.Name,
                 Operation.Name);
 
             var connection = new DownloadedDuplexConnectionInformation(ConnectionState.Headers.Values);

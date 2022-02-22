@@ -1,0 +1,33 @@
+﻿@using static System.Reflection.BindingFlags
+@using GrpcBrowser.Store.Services
+@using System.Reflection
+
+<style>
+    .types {
+        font-family: monospace;
+        font-size: 14px;
+        font-weight: bold;
+        padding-left: 10px;
+    }
+</style>
+
+<MudTreeView Dense="true" T="string">
+    <MudTreeViewItem Class="types" Value="@Type.Name" TextClass="types">
+            
+        @foreach (var property in Type.GetTypeInfo().DeclaredProperties)
+        {
+            <MudTreeViewItem Value="@property.Name">
+                @if (RecursionLevelsRemaining > 0)
+                {
+                    <TypeCommentTree Type="@(property.GetType())" RecursionLevelsRemaining="@(RecursionLevelsRemaining - 1)" />
+                }
+            </MudTreeViewItem>
+        }
+    </MudTreeViewItem>
+</MudTreeView>
+
+@code 
+{
+    [Parameter] public Type Type { get; set; }
+    [Parameter] public int RecursionLevelsRemaining { get; set; }
+}

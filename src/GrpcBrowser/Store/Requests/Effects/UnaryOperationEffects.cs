@@ -21,7 +21,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
         private static async Task InvokeCodeFirstService(GrpcChannel channel, CallUnaryOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
         {
-            var client = channel.GetCodeFirstGrpcServiceClient(action.Service.Name);
+            var client = channel.GetCodeFirstGrpcServiceClient(action.Service.ServiceType.Name);
             var context = new CallContext(callOptions);
 
             var result = await client.UnaryAsync(requestParameter, action.Operation.Name, action.Operation.RequestType, action.Operation.ResponseType, context);
@@ -31,7 +31,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
         private static async Task InvokeProtoFileService(GrpcChannel channel, CallUnaryOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
         {
-            var client = channel.GetProtoFileGrpcServiceClient(action.Service.Name);
+            var client = channel.GetProtoFileGrpcServiceClient(action.Service.ServiceType.Name);
             var result = client.InvokeGrpcOperation(action.Operation, requestParameter, callOptions);
             
             if (result.GetType().Name == "AsyncUnaryCall`1")

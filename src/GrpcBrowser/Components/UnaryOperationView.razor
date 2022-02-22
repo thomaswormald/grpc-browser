@@ -10,6 +10,10 @@
 
 @if (Operation is not null)
 {
+    <div>
+        @CommentProvider.GetOperationDescription(Operation, Service)
+    </div>
+
     <RequestResponseTypes Operation="@Operation" />
 
     <div class="mt-4">Request Body</div>

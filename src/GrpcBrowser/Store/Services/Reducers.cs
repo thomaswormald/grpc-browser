@@ -7,6 +7,6 @@ namespace GrpcBrowser.Store.Services
     {
         [ReducerMethod]
         public static ServicesState Reduce(ServicesState state, SetServices action) =>
-            state with { Services = action.Services.ToImmutableDictionary(c => c.Name, c => c) };
+            state with { Services = action.Services.ToImmutableDictionary(c => c.ServiceType.Name, c => c) };
     }
 }

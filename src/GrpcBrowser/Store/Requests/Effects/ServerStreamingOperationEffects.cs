@@ -23,7 +23,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
         private static async Task InvokeCodeFirstService(GrpcChannel channel, CallServerStreamingOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
         {
-            var client = channel.GetCodeFirstGrpcServiceClient(action.Service.Name);
+            var client = channel.GetCodeFirstGrpcServiceClient(action.Service.ServiceType.Name);
             var context = new CallContext(callOptions);
 
             var result = client.ServerStreamingAsync(requestParameter, action.Operation.Name, action.Operation.RequestType, action.Operation.ResponseType, context);
@@ -36,7 +36,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
         private async Task InvokeProtoFileService(GrpcChannel channel, CallServerStreamingOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
         {
-            var client = channel.GetProtoFileGrpcServiceClient(action.Service.Name);
+            var client = channel.GetProtoFileGrpcServiceClient(action.Service.ServiceType.Name);
             var result = client.InvokeGrpcOperation(action.Operation, requestParameter, callOptions);
 
             var responseStream = result.GetType().GetProperty("ResponseStream")?.GetValue(result);

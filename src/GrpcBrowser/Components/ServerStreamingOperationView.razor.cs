@@ -90,7 +90,7 @@ namespace GrpcBrowser.Components
         private async Task Download()
         {
             var operation = new DownloadedServerStreamingOperationInformation(
-                ConnectionState.RequestAction.Service.Name,
+                ConnectionState.RequestAction.Service.ServiceType.Name,
                 ConnectionState.RequestAction.Operation.Name);
 
             var request = new DownloadedServerStreamingRequest(

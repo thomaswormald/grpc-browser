@@ -1,4 +1,5 @@
 ﻿@using GrpcBrowser.Store.Services
+@using static System.Reflection.BindingFlags
 
 <style>
     .types {
@@ -10,12 +11,12 @@
 </style>
 
 <div class="d-flex flex-row">
-    <div>Request Type:</div>
-    <div class="types">@Operation.RequestType</div>
+    <div class="mt-1">Request Type:</div>
+    <TypeCommentTree Type="@Operation.RequestType" RecursionLevelsRemaining="1" />
 </div>
 <div class="d-flex flex-row">
-    <div>Response Type:</div>
-    <div class="types">@Operation.ResponseType</div>
+    <div class="mt-1">Response Type:</div>
+    <TypeCommentTree Type="@Operation.ResponseType" RecursionLevelsRemaining="1" />
 </div>
 
 @code

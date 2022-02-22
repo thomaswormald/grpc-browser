@@ -77,7 +77,7 @@ namespace GrpcBrowser.Components
         private async Task Download()
         {
             var operation = new DownloadedUnaryOperationInformation(
-                UnaryRequestState.RequestAction.Service.Name,
+                UnaryRequestState.RequestAction.Service.ServiceType.Name,
                 UnaryRequestState.RequestAction.Operation.Name);
 
             var request = new DownloadedUnaryRequest(
