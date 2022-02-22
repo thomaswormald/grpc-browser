@@ -23,7 +23,9 @@
     <div>
         @CommentProvider.GetOperationDescription(Operation, Service)
     </div>
-    <RequestResponseTypes Operation="@Operation" />
+    <div class="mt-2">
+        <RequestResponseTypes Operation="@Operation" />
+    </div>
 
     <div class="mt-4">Request Body</div>
     <MudTextField T="string" Variant="Variant.Filled" Lines="@_requestTextFieldLines" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />

@@ -35,7 +35,9 @@ namespace GrpcBrowser
             }
             else if (service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
             {
-                methodInfo = service.ServiceType.GetMethod(operation.Name, new Type[] { typeof(Grpc.Core.CallOptions) });
+                methodInfo =
+                    service.ServiceType.GetMethod(operation.Name, new Type[] { typeof(Grpc.Core.CallOptions) })
+                    ?? service.ServiceType.GetMethod(operation.Name, new Type[] { operation.RequestType, typeof(Grpc.Core.CallOptions) });
             }    
 
             if (methodInfo is null)
@@ -43,7 +45,9 @@ namespace GrpcBrowser
                 return string.Empty;
             }
 
-            return methodInfo.GetXmlDocsSummary();            
+            var docs = methodInfo.GetXmlDocsSummary();
+
+            return docs;
         }
     }
 }
