@@ -1,0 +1,23 @@
+﻿@using static System.Reflection.BindingFlags
+@using GrpcBrowser.Store.Services
+@using System.Reflection
+
+<style>
+    .types {
+        font-family: monospace;
+        font-size: 14px;
+        font-weight: bold;
+        padding-left: 10px;
+    }
+</style>
+
+<MudTreeView Dense="true" T="string">
+    <MudTreeViewItem Class="types" Value="@Type.Name" TextClass="types">
+        <TypeTreeElement Type="@Type" RecursionLevelsRemaining="5" />
+    </MudTreeViewItem>
+</MudTreeView>
+
+@code 
+{
+    [Parameter] public Type Type { get; set; }
+}

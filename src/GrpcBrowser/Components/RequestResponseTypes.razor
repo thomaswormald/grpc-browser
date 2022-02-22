@@ -12,14 +12,44 @@
 
 <div class="d-flex flex-row">
     <div class="mt-1">Request Type:</div>
-    <TypeCommentTree Type="@Operation.RequestType" RecursionLevelsRemaining="1" />
+    <div class="types">@Operation.RequestType</div>
+    <MudTooltip Text="Show Type Information">
+        <MudIconButton Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" OnClick="@ShowRequestTypeTree"/>
+    </MudTooltip>
 </div>
+@if (_showRequestTypeTree)
+{
+    <TypeTree Type="@Operation.RequestType" />
+}
+
 <div class="d-flex flex-row">
     <div class="mt-1">Response Type:</div>
-    <TypeCommentTree Type="@Operation.ResponseType" RecursionLevelsRemaining="1" />
+    <div class="types">@Operation.ResponseType</div>
+    <MudTooltip Text="Show Type Information">
+        <MudIconButton Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" OnClick="@ShowResponseTypeTree"/>
+    </MudTooltip>
 </div>
+@if (_showResponseTypeTree)
+{
+    <TypeTree Type="@Operation.ResponseType" />
+}
 
 @code
 {
     [Parameter] public GrpcOperation Operation { get; set; }
+
+    private bool _showRequestTypeTree = false;
+    private bool _showResponseTypeTree = false;
+
+    private void ShowRequestTypeTree()
+    {
+        _showRequestTypeTree = true;
+        StateHasChanged();
+    }
+
+    private void ShowResponseTypeTree()
+    {
+        _showResponseTypeTree = true;
+        StateHasChanged();
+    }
 }

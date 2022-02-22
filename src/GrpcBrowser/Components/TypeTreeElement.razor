@@ -1,0 +1,63 @@
+﻿@using static System.Reflection.BindingFlags
+@using GrpcBrowser.Store.Services
+@using System.Reflection
+@using System.Collections
+
+<style>
+    .types {
+        font-family: monospace;
+        font-size: 14px;
+        font-weight: bold;
+        padding-left: 10px;
+    }
+</style>
+
+@if (RecursionLevelsRemaining > 0)
+{
+    @foreach (var property in Type.GetTypeInfo().DeclaredProperties)
+    {
+        Type propertyType = property.PropertyType;
+
+        @if (propertyType.GetInterface(nameof(IDictionary)) is not null)
+        {
+            <MudTreeViewItem Class="types" Value="@property.Name" TextClass="types">
+                <MudTreeViewItem Class="types" Value="@("Key: " + propertyType.GenericTypeArguments[0].Name)" TextClass="types">
+                    <TypeTreeElement Type="@propertyType.GenericTypeArguments[0]" RecursionLevelsRemaining="@(RecursionLevelsRemaining - 1)" />
+                </MudTreeViewItem>
+                <MudTreeViewItem Class="types" Value="@("Value: " + propertyType.GenericTypeArguments[1].Name)" TextClass="types">
+                    <TypeTreeElement Type="@propertyType.GenericTypeArguments[1]" RecursionLevelsRemaining="@(RecursionLevelsRemaining - 1)" />
+                </MudTreeViewItem>
+            </MudTreeViewItem>
+        }
+        else if (propertyType.GetInterface(nameof(IEnumerable)) is not null)
+        {
+            <MudTreeViewItem Class="types" Value="@(property.Name)" TextClass="types">
+                <TypeTreeElement Type="@propertyType.GenericTypeArguments[0]" RecursionLevelsRemaining="@(RecursionLevelsRemaining - 1)" />
+            </MudTreeViewItem>
+        }
+        else if (!SystemType(propertyType) && !ProtobufType(propertyType))
+        {
+            <MudTreeViewItem Class="types" Value="@property.Name" TextClass="types">
+                <TypeTreeElement Type="@propertyType" RecursionLevelsRemaining="@(RecursionLevelsRemaining - 1)" />
+            </MudTreeViewItem>
+        }
+        else if (!ProtobufType(propertyType))
+        {
+            <MudTreeViewItem Class="types" Value="@property.Name" TextClass="types" />
+        }
+        else
+        {
+            ;
+        }
+    }
+}
+
+@code 
+{
+    [Parameter] public Type Type { get; set; }
+    [Parameter] public int RecursionLevelsRemaining { get; set; }
+
+    private const string GoogleProtobufNamespace = "Google.Protobuf";
+    private bool SystemType(Type type) => type.Namespace.StartsWith(nameof(System));
+    private bool ProtobufType(Type type) => type.Namespace.StartsWith(nameof(GoogleProtobufNamespace));
+}
