@@ -26,12 +26,6 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-  publish:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src
-    steps:
     - name: Publish NuGet
       if: github.ref == 'refs/heads/master'
       uses: brandedoutcast/publish-nuget@v2.5.5
