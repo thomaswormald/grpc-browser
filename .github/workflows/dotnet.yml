@@ -31,6 +31,6 @@ jobs:
       run: dotnet pack -c Release -o . GrpcBrowser/GrpcBrowser.csproj
     - name: Publish
       if: github.ref == 'refs/heads/master'
-      run: dotnet nuget push GrpcBrowser/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push src/GrpcBrowser/*.nupkg -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
       
       
