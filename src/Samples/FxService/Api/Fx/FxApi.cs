@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 public interface IFxApi
 {
     /// <summary>
-    /// Make an FX trade
+    /// Make an FX trade. Supported currencies are GBP, USD and EUR
     /// </summary>
     [Operation]
     Task<FxOrderResult> PlaceFxOrder(FxOrder request, CallContext context = default);
