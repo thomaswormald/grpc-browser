@@ -27,6 +27,20 @@ namespace GrpcBrowser.Components
         private int _requestTextFieldLines = 5;
         private GrpcRequestId? _requestId = null;
         private ImmutableList<HeaderViewModel> _headers = ImmutableList<HeaderViewModel>.Empty;
+        private int DisplayedRequestNumber
+        {
+            get => _displayedRequestNumber;
+            set
+            {
+                _displayedRequestNumber = value;
+                _requestJson =
+                    ConnectionState?.Requests[_displayedRequestNumber - 1] is null
+                        ? _requestJson
+                        : JsonConvert.SerializeObject(ConnectionState?.Requests[_displayedRequestNumber - 1].RequestBody, Formatting.Indented);
+                StateHasChanged();
+            }
+        }
+        private int _displayedRequestNumber = 1;
 
         protected override void OnParametersSet()
         {
@@ -99,7 +113,7 @@ namespace GrpcBrowser.Components
         private async Task Download()
         {
             var operation = new DownloadedClientStreamingOperationInformation(
-                Service.Name,
+                Service.ServiceType.Name,
                 Operation.Name);
 
             var connection = new DownloadedClientStreamingConnectionInformation(ConnectionState.Headers.Values);

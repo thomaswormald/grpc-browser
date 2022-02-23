@@ -12,10 +12,10 @@ This project allows you to add a web-based gRPC Browser for debugging purposes t
 2. Does not use gRPC reflection or gRPC web
 3. Support for all types of gRPC operation - Unary, Server Streaming, Client Streaming and Duplex
 4. Support for Metadata
+5. Support for [displaying documentation](docs/documentation.md)
 
 ### Future Roadmap
 1. OAuth 2.0 support
-2. UI improvements for viewing older versions of streamed messages
 
 ## Usage
 1. Add the package `GrpcBrowser` from NuGet to your project. Your project SDK must be Microsoft.NET.Sdk.Web (see Troubleshooting for further details).
@@ -51,6 +51,8 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 5. In the `ConfigureServices` method of your Startup class, add `services.AddGrpcBrowser()`
 
 6. Start your service, and navigate to `/grpc` in your browser.
+
+[Click here for information on displaying documentation](docs/documentation.md)
 
 ## Troubleshooting
 

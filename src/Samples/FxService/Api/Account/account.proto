@@ -14,6 +14,8 @@ message AccountBalanceUpdate {
   string lastUpdate = 2;
 }
 
+// Keeps track of the currency account balances
 service AccountService {
+  // Streams out the state of the currency account balances after a change. Make a trade to receive an update message
   rpc SubscribeAccountBalances (AccountBalanceRequest) returns (stream AccountBalanceUpdate);
 }

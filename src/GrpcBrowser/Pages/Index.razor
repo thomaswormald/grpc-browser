@@ -2,13 +2,10 @@
 @using System.Reflection
 @using GrpcBrowser.Store.Services
 @using GrpcBrowser.Components
+@using Namotion.Reflection
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<MudAppBar Color="Color.Dark" Fixed="true">
-    <MudContainer MaxWidth="MaxWidth.Large">
-        <MudText Typo="Typo.h6">gRPC Browser</MudText>
-    </MudContainer>
-</MudAppBar>
+<AppTitleBar />
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudText Typo="Typo.h4" Style="font-weight: bold" Class="mt-16 pt-8">
@@ -27,7 +24,7 @@
                     <TitleContent>
                         <div Class="d-flex flex-row ">
                             <MudText Typo="Typo.h6" Style="font-weight: bolder">
-                                @client.Value.Name
+                                @client.Value.ServiceType.Name
                             </MudText>
                             <div class="mx-2">
                                 @if (client.Value.ImplementationType == GrpcServiceImplementationType.ProtoFile)
@@ -40,6 +37,9 @@
                                 }
                             </div>
                         </div>
+                        <MudText Typo="Typo.caption">
+                            @CommentProvider.GetServiceDescription(client.Value)
+                        </MudText>
                     </TitleContent>
                     <ChildContent>
                         <ServiceView Service="@client.Value" />

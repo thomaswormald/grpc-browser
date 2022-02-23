@@ -20,9 +20,19 @@
 
 @if (Operation is not null)
 {
-    <RequestResponseTypes Operation="@Operation" />
+    <div>
+        @CommentProvider.GetOperationDescription(Operation, Service)
+    </div>
+    <div class="mt-2">
+        <RequestResponseTypes Operation="@Operation" />
+    </div>
 
-    <div class="mt-4">Request Body</div>
+    <div class="d-flex flex-row">
+        <div class="mt-4 mr-auto">Request Body</div>
+        <div class="mt-2">
+            <Pagination NumberOfMessages="@(ConnectionState?.Requests.Count ?? 0)" @bind-SelectedMessage="@DisplayedRequestNumber" ShowLatestOnNewMessage="@true" />
+        </div>
+    </div>
     <MudTextField T="string" Variant="Variant.Filled" Lines="@_requestTextFieldLines" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />
 
     <div class="mt-2">
@@ -61,8 +71,11 @@
         <div class="d-flex flex-row">
             <div class="mt-4 mr-auto">Response Body</div>
             <MudTooltip Text="Download">
-                <MudIconButton Icon="@Icons.Material.Filled.FileDownload" Size="@Size.Small" Class="mt-2" OnClick="@Download">Download Response</MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.FileDownload" Size="@Size.Small" Class="mt-3" OnClick="@Download">Download Response</MudIconButton>
             </MudTooltip>
+            <div class="mt-2">
+                <Pagination NumberOfMessages="@ConnectionState.Responses.Count" @bind-SelectedMessage="@_displayedResponseNumber" />
+            </div>
         </div>
         <MudTextField T="string" Variant="Variant.Filled" Lines="@ResponseTextFieldLines" @bind-Value="@SerializedResponse" Style="@ServiceView.jsonTextBoxStyle" />
     }

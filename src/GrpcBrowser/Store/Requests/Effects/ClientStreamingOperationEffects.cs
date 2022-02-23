@@ -42,7 +42,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
         private async Task InvokeCodeFirstService(GrpcChannel channel, CallClientStreamingOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
         {
-            var client = channel.GetCodeFirstGrpcServiceClient(action.Service.Name);
+            var client = channel.GetCodeFirstGrpcServiceClient(action.Service.ServiceType.Name);
             var context = new CallContext(callOptions);
 
             var subject = new Subject<object>();
@@ -70,7 +70,7 @@ namespace GrpcBrowser.Store.Requests.Effects
 
         private async Task InvokeProtoFileService(GrpcChannel channel, CallClientStreamingOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
         {
-            var client = channel.GetProtoFileGrpcServiceClient(action.Service.Name);
+            var client = channel.GetProtoFileGrpcServiceClient(action.Service.ServiceType.Name);
 
             var method = client.GetType().GetMethod(action.Operation.Name, new[] { typeof(CallOptions) });
 

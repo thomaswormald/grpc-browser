@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -27,6 +26,7 @@ namespace GrpcBrowser.Components
         private int _requestTextFieldLines = 5;
         private GrpcRequestId? _requestId = null;
         private ImmutableList<HeaderViewModel> _headers = ImmutableList<HeaderViewModel>.Empty;
+        private int _displayedResponseNumber = 1;
 
         protected override void OnParametersSet()
         {
@@ -47,7 +47,7 @@ namespace GrpcBrowser.Components
             Dispatcher?.Dispatch(new CallServerStreamingOperation(Service, Operation, _requestJson, _requestId, new GrpcRequestHeaders(_headers.ToImmutableDictionary(h => h.Key, h => h.Value)), DateTimeOffset.Now));
         }
 
-        private GrpcResponse? Response => ConnectionState?.Responses.LastOrDefault();
+        private GrpcResponse? Response => ConnectionState?.Responses.Count >= _displayedResponseNumber ? ConnectionState?.Responses[_displayedResponseNumber - 1] : null;
 
         // This is a hack so that I can use the MudTextField to display the response
         private string? SerializedResponse
@@ -90,7 +90,7 @@ namespace GrpcBrowser.Components
         private async Task Download()
         {
             var operation = new DownloadedServerStreamingOperationInformation(
-                ConnectionState.RequestAction.Service.Name,
+                ConnectionState.RequestAction.Service.ServiceType.Name,
                 ConnectionState.RequestAction.Operation.Name);
 
             var request = new DownloadedServerStreamingRequest(

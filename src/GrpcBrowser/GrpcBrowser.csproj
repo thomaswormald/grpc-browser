@@ -6,7 +6,7 @@
     <OutputType>Library</OutputType>
 	<LangVersion>10</LangVersion>
 	<IsPackable>true</IsPackable>
-	<Version>1.2.0</Version>
+	<Version>1.3.0</Version>
 	<Authors>Thomas Wormald</Authors>
 	<Description>Extends your application with a web UI for browsing and executing gRPC operations</Description>
 	<PackageTags>grpc;browser;rpc;</PackageTags>
@@ -23,15 +23,15 @@
     <PackageReference Include="Grpc.AspNetCore.Server" Version="2.40.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.40.0" />
     <PackageReference Include="MudBlazor" Version="2.0.7" />
+    <PackageReference Include="Namotion.Reflection" Version="2.0.10" />
     <PackageReference Include="protobuf-net.Grpc" Version="1.0.152" />
     <PackageReference Include="System.Linq.Async" Version="5.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\" />
     <Folder Include="Store\Requests\" />
-    <None Include="icon.png" Pack="true" PackagePath="\"/>
+    <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

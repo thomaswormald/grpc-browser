@@ -90,7 +90,7 @@ namespace GrpcBrowser.Pages
                     .Select(operationMethod => new GrpcOperation(RemoveAsyncFromCodeFirstMethodName(operationMethod.Method.Name, implementationType), operationMethod.RequestMessageType, operationMethod.ResponseMessageType, operationMethod.OperationType))
                     .ToImmutableDictionary(k => k.Name, v => v);
 
-            return new GrpcService(serviceType.Name, methods, implementationType);
+            return new GrpcService(serviceType, methods, implementationType);
         }
 
         protected override void OnParametersSet()

@@ -2,16 +2,27 @@
 using ProtoBuf.Grpc.Configuration;
 using System.Reactive.Linq;
 
-
+/// <summary>
+/// Place FX trade orders, stream and update FX rates.
+/// </summary>
 [Service]
 public interface IFxApi
 {
+    /// <summary>
+    /// Make an FX trade. Supported currencies are GBP, USD and EUR
+    /// </summary>
     [Operation]
     Task<FxOrderResult> PlaceFxOrder(FxOrder request, CallContext context = default);
 
+    /// <summary>
+    /// Stream out individual FX rate changes 
+    /// </summary>
     [Operation]
     IAsyncEnumerable<FxRateUpdate> StreamFxRates(IAsyncEnumerable<FxRateRequest> request, CallContext context = default);
 
+    /// <summary>
+    /// Set the FX rate between two currencies
+    /// </summary>
     [Operation]
     Task<SetFxRateResult> SetFxRates(IAsyncEnumerable<SetFxRateRequest> requestStream, CallContext context = default);
 }

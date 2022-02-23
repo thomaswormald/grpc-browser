@@ -12,9 +12,18 @@ message SampleProtoFirstReply {
   string content = 1;
 }
 
+// This is a sample service that demonstrates all types of gRPC operations from a proto-first gRPC service
 service ProtoFirstGreeter {
+
+  // A Unary operation takes a single request, and returns a single response
   rpc UnaryOperation (SampleProtoFirstRequest) returns (SampleProtoFirstReply);
+
+  // A Server Streaming operation takes a single request, and returns a stream of zero or more responses
   rpc ServerStreamingOperation (SampleProtoFirstRequest) returns (stream SampleProtoFirstReply);
+
+  // A Client Streaming operation takes a stream of one or more requests, and returns a single response when the request stream is closed
   rpc ClientStreamingOperation (stream SampleProtoFirstRequest) returns (SampleProtoFirstReply);
+
+  // A Duplex operation take a stream of zero or more requests, and returns a stream of zero or more responses
   rpc DuplexStreamingOperation (stream SampleProtoFirstRequest) returns (stream SampleProtoFirstReply);
 }
