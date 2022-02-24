@@ -1,5 +1,6 @@
 using FxService.Api.Account;
 using GrpcBrowser.Configuration;
+using GrpcBrowser.Configuration.RequestInterceptors.Implementations;
 using ProtoBuf.Grpc.Server;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,18 +21,18 @@ var app = builder.Build();
 
 app.UseGrpcBrowser(options =>
 {
-    options.GlobalInterceptors.Add(new AddHeaderInterceptor("Header-Key", "Test Header Value"));
+    options.GlobalRequestInterceptors.Add(new SetHeaderInterceptor("Header-Key", "Test Header Value"));
 });
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<AccountApi>().AddToGrpcBrowserWithClient<AccountService.AccountServiceClient>(options =>
 {
-    options.Interceptors.Add(new AddHeaderInterceptor("Operation-Type", "ProtoFirst"));
+    options.Interceptors.Add(new SetHeaderInterceptor("Operation-Type", "ProtoFirst"));
 });
 
 app.MapGrpcService<FxApi>().AddToGrpcBrowserWithService<IFxApi>(options =>
 {
-    options.Interceptors.Add(new AddHeaderInterceptor("Operation-Type", "CodeFirst"));
+    options.Interceptors.Add(new SetHeaderInterceptor("Operation-Type", "CodeFirst"));
 });
 
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");

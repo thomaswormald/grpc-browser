@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Fluxor;
 using Grpc.Core;
 using Grpc.Net.Client;
-using GrpcBrowser.Configuration;
+using GrpcBrowser.Configuration.RequestInterceptors;
 using GrpcBrowser.Infrastructure;
 using GrpcBrowser.Store.Services;
 using ProtoBuf.Grpc;

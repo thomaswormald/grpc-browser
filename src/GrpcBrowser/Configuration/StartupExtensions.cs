@@ -6,17 +6,14 @@ using MudBlazor.Services;
 using Microsoft.AspNetCore.Routing;
 using BlazorDownloadFile;
 using System;
-using System.Collections.Generic;
+using ProtoBuf.Grpc.Configuration;
+using System.ServiceModel;
+using System.Collections.Immutable;
 
 namespace GrpcBrowser.Configuration
 {
     public static class StartupExtensions
     {
-        public class GrpcBrowserOptions
-        {
-            public List<IRequestInterceptor> GlobalInterceptors { get; set; } = new List<IRequestInterceptor>();
-        }
-
         public static void AddGrpcBrowser(this IServiceCollection services)
         {
             services.AddRazorPages();
@@ -33,7 +30,7 @@ namespace GrpcBrowser.Configuration
         {
             var options = new GrpcBrowserOptions();
             optionsAction?.Invoke(options);
-            ConfiguredGrpcServices.GlobalRequestInterceptors = ConfiguredGrpcServices.GlobalRequestInterceptors.AddRange(options.GlobalInterceptors);
+            GrpcBrowserConfiguration.GlobalRequestInterceptors = GrpcBrowserConfiguration.GlobalRequestInterceptors.AddRange(options.GlobalRequestInterceptors);
 
             app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/grpc"), tools =>
             {
@@ -50,14 +47,18 @@ namespace GrpcBrowser.Configuration
             endpoints.MapFallbackToPage("/grpc", "/_Host");
         }
 
-
         public static GrpcServiceEndpointConventionBuilder AddToGrpcBrowserWithClient<TClient>(this GrpcServiceEndpointConventionBuilder builder, Action<GrpcServiceOptions> optionsAction = null) where TClient : Grpc.Core.ClientBase<TClient>
         {
             var options = new GrpcServiceOptions();
 
             optionsAction?.Invoke(options);
 
-            GrpcBrowser.AddProtoFirstService<TClient>(options);
+            if (GrpcBrowserConfiguration.ProtoGrpcClients.ContainsKey(typeof(TClient).FullName))
+            {
+                throw new ArgumentException($"A proto-first service with the type {typeof(TClient).Name} has already been configured");
+            }
+
+            GrpcBrowserConfiguration.ProtoGrpcClients = GrpcBrowserConfiguration.ProtoGrpcClients.Add(typeof(TClient).FullName, new ConfiguredGrpcClient(typeof(TClient), options.Interceptors.ToImmutableList()));
 
             return builder;
         }
@@ -68,7 +69,25 @@ namespace GrpcBrowser.Configuration
 
             optionsAction?.Invoke(options);
 
-            GrpcBrowser.AddCodeFirstService<TServiceInterface>(options);
+            if (GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces.ContainsKey(typeof(TServiceInterface).FullName))
+            {
+                throw new ArgumentException($"A code-first service with interface {typeof(TServiceInterface).Name} has already been configured");
+            }
+
+            if (!typeof(TServiceInterface).IsInterface)
+            {
+                throw new ArgumentException(
+                    $"To add your code-first service to GrpcBrowser, you must provide your GRPC service's interface. '{typeof(TServiceInterface).Name}' is not an interface");
+            }
+
+            if (!typeof(TServiceInterface).IsDefined(typeof(ServiceAttribute), false) &&
+                !typeof(TServiceInterface).IsDefined(typeof(ServiceContractAttribute), false))
+            {
+                throw new ArgumentException(
+                    $"To add your code-first service to GrpcBrowser, you must provide your GRPC service's interface. '{typeof(TServiceInterface).Name}' does not have the attribute '{nameof(ServiceAttribute)}' or '{nameof(ServiceContractAttribute)}', which is required for code-first GRPC services");
+            }
+
+            GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces = GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces.Add(typeof(TServiceInterface).FullName, new ConfiguredGrpcClient(typeof(TServiceInterface), options.Interceptors.ToImmutableList()));
 
             return builder;
         }

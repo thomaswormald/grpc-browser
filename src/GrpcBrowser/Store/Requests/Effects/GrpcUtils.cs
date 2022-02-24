@@ -30,14 +30,14 @@ namespace GrpcBrowser.Store.Requests.Effects
 
         internal static GrpcClient GetCodeFirstGrpcServiceClient(this GrpcChannel channel, string serviceName)
         {
-            var clientType = ConfiguredGrpcServices.CodeFirstGrpcServiceInterfaces.Single(c => c.Value.Type.Name == serviceName).Value.Type;
+            var clientType = GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces.Single(c => c.Value.Type.Name == serviceName).Value.Type;
 
             return channel.CreateGrpcService(clientType);
         }
 
         internal static object? GetProtoFileGrpcServiceClient(this GrpcChannel channel, string serviceName)
         {
-            var clientType = ConfiguredGrpcServices.ProtoGrpcClients.Single(c => c.Value.Type.Name == serviceName).Value.Type;
+            var clientType = GrpcBrowserConfiguration.ProtoGrpcClients.Single(c => c.Value.Type.Name == serviceName).Value.Type;
             return Activator.CreateInstance(clientType, channel);
         }
 

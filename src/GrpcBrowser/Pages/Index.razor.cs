@@ -95,9 +95,9 @@ namespace GrpcBrowser.Pages
 
         protected override void OnParametersSet()
         {
-            var protoFileGrpcServices = ConfiguredGrpcServices.ProtoGrpcClients.Select(service => ToGrpcService(service.Value.Type, GrpcServiceImplementationType.ProtoFile));
+            var protoFileGrpcServices = GrpcBrowserConfiguration.ProtoGrpcClients.Select(service => ToGrpcService(service.Value.Type, GrpcServiceImplementationType.ProtoFile));
 
-            var codeFirstGrpcServices = ConfiguredGrpcServices.CodeFirstGrpcServiceInterfaces.Select(service => ToGrpcService(service.Value.Type, GrpcServiceImplementationType.CodeFirst));
+            var codeFirstGrpcServices = GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces.Select(service => ToGrpcService(service.Value.Type, GrpcServiceImplementationType.CodeFirst));
 
             Dispatcher?.Dispatch(new SetServices(protoFileGrpcServices.Concat(codeFirstGrpcServices).ToImmutableList()));
 
