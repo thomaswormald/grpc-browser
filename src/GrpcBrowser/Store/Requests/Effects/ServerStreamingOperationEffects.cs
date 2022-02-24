@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Fluxor;
 using Grpc.Core;
 using Grpc.Net.Client;
+using GrpcBrowser.Configuration;
 using GrpcBrowser.Infrastructure;
 using GrpcBrowser.Store.Services;
 using ProtoBuf.Grpc;
@@ -69,6 +70,8 @@ namespace GrpcBrowser.Store.Requests.Effects
         public async Task Handle(CallServerStreamingOperation action, IDispatcher dispatcher)
         {
             var channel = GrpcChannel.ForAddress(_urlProvider.BaseUrl);
+
+            action = await action.ApplyAllInterceptors();
 
             var requestParameter = GrpcUtils.GetRequestParameter(action.RequestParameterJson, action.Operation.RequestType);
 

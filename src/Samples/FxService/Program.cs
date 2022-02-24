@@ -18,11 +18,21 @@ builder.Services.AddHostedService<FxRateRandomiser>();
 
 var app = builder.Build();
 
-app.UseGrpcBrowser();
+app.UseGrpcBrowser(options =>
+{
+    options.GlobalInterceptors.Add(new AddHeaderInterceptor("Header-Key", "Test Header Value"));
+});
 
 // Configure the HTTP request pipeline.
-app.MapGrpcService<AccountApi>().AddToGrpcBrowserWithClient<AccountService.AccountServiceClient>();
-app.MapGrpcService<FxApi>().AddToGrpcBrowserWithService<IFxApi>();
+app.MapGrpcService<AccountApi>().AddToGrpcBrowserWithClient<AccountService.AccountServiceClient>(options =>
+{
+    options.Interceptors.Add(new AddHeaderInterceptor("Operation-Type", "ProtoFirst"));
+});
+
+app.MapGrpcService<FxApi>().AddToGrpcBrowserWithService<IFxApi>(options =>
+{
+    options.Interceptors.Add(new AddHeaderInterceptor("Operation-Type", "CodeFirst"));
+});
 
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 app.MapGrpcBrowser();

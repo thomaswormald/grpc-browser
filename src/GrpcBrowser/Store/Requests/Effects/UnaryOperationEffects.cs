@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Fluxor;
 using Grpc.Core;
 using Grpc.Net.Client;
+using GrpcBrowser.Configuration;
 using GrpcBrowser.Infrastructure;
 using GrpcBrowser.Store.Services;
 using ProtoBuf.Grpc;
@@ -53,8 +54,9 @@ namespace GrpcBrowser.Store.Requests.Effects
 
             var requestParameter = GrpcUtils.GetRequestParameter(action.RequestParameterJson, action.Operation.RequestType);
 
-            var callOptions = GrpcUtils.GetCallOptions(action.Headers, CancellationToken.None);
+            action = await action.ApplyAllInterceptors();
 
+            var callOptions = GrpcUtils.GetCallOptions(action.Headers, CancellationToken.None);
 
             try
             {

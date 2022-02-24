@@ -3,17 +3,20 @@ using GrpcBrowser.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using ProtoBuf.Grpc.Configuration;
-using System;
-using System.Collections.Generic;
-using System.ServiceModel;
 using Microsoft.AspNetCore.Routing;
 using BlazorDownloadFile;
+using System;
+using System.Collections.Generic;
 
 namespace GrpcBrowser.Configuration
 {
     public static class StartupExtensions
     {
+        public class GrpcBrowserOptions
+        {
+            public List<IRequestInterceptor> GlobalInterceptors { get; set; } = new List<IRequestInterceptor>();
+        }
+
         public static void AddGrpcBrowser(this IServiceCollection services)
         {
             services.AddRazorPages();
@@ -26,9 +29,12 @@ namespace GrpcBrowser.Configuration
             services.AddBlazorDownloadFile(ServiceLifetime.Scoped);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void UseGrpcBrowser(this IApplicationBuilder app)
+        public static void UseGrpcBrowser(this IApplicationBuilder app, Action<GrpcBrowserOptions> optionsAction = null)
         {
+            var options = new GrpcBrowserOptions();
+            optionsAction?.Invoke(options);
+            ConfiguredGrpcServices.GlobalRequestInterceptors = ConfiguredGrpcServices.GlobalRequestInterceptors.AddRange(options.GlobalInterceptors);
+
             app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/grpc"), tools =>
             {
                 app.UseStaticFiles("/grpc");
@@ -44,16 +50,25 @@ namespace GrpcBrowser.Configuration
             endpoints.MapFallbackToPage("/grpc", "/_Host");
         }
 
-        public static GrpcServiceEndpointConventionBuilder AddToGrpcBrowserWithClient<TClient>(this GrpcServiceEndpointConventionBuilder builder) where TClient : Grpc.Core.ClientBase<TClient>
+
+        public static GrpcServiceEndpointConventionBuilder AddToGrpcBrowserWithClient<TClient>(this GrpcServiceEndpointConventionBuilder builder, Action<GrpcServiceOptions> optionsAction = null) where TClient : Grpc.Core.ClientBase<TClient>
         {
-            GrpcBrowser.AddProtoFirstService<TClient>();
+            var options = new GrpcServiceOptions();
+
+            optionsAction?.Invoke(options);
+
+            GrpcBrowser.AddProtoFirstService<TClient>(options);
 
             return builder;
         }
 
-        public static GrpcServiceEndpointConventionBuilder AddToGrpcBrowserWithService<TServiceInterface>(this GrpcServiceEndpointConventionBuilder builder)
+        public static GrpcServiceEndpointConventionBuilder AddToGrpcBrowserWithService<TServiceInterface>(this GrpcServiceEndpointConventionBuilder builder, Action<GrpcServiceOptions> optionsAction = null)
         {
-            GrpcBrowser.AddCodeFirstService<TServiceInterface>();
+            var options = new GrpcServiceOptions();
+
+            optionsAction?.Invoke(options);
+
+            GrpcBrowser.AddCodeFirstService<TServiceInterface>(options);
 
             return builder;
         }
