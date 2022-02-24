@@ -7,8 +7,9 @@ namespace GrpcBrowser.Configuration
 {
     internal static class ConfiguredGrpcServices
     {
-        public static List<Type> ProtoGrpcClients = new List<Type>();
-        public static List<Type> CodeFirstGrpcServiceInterfaces = new List<Type>();
+        internal static List<Type> ProtoGrpcClients = new List<Type>();
+        internal static List<Type> CodeFirstGrpcServiceInterfaces = new List<Type>();
+        internal static List<IRequestInterceptor> ProtoRequestInterceptors = new List<IRequestInterceptor>();
     }
 
     public static class GrpcBrowser
