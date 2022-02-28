@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Store\Requests\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 

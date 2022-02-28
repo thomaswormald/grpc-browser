@@ -8,7 +8,6 @@ using Fluxor;
 using Grpc.Core;
 using Grpc.Net.Client;
 using GrpcBrowser.Configuration;
-using GrpcBrowser.Configuration.RequestInterceptors;
 using GrpcBrowser.Infrastructure;
 using GrpcBrowser.Store.Services;
 using ProtoBuf.Grpc;
@@ -123,8 +122,6 @@ namespace GrpcBrowser.Store.Requests.Effects
         public async Task Handle(OpenDuplexConnection action, IDispatcher dispatcher)
         {
             var channel = GrpcChannel.ForAddress(_channelUrlProvider.BaseUrl);
-
-            action = await action.ApplyAllInterceptors();
 
             var cts = new CancellationTokenSource();
             var callOptions = GrpcUtils.GetCallOptions(action.Headers, cts.Token);

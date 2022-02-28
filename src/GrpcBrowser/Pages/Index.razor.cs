@@ -3,6 +3,7 @@ using Grpc.Core;
 using GrpcBrowser.Configuration;
 using GrpcBrowser.Store.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf.Grpc;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace GrpcBrowser.Pages
     {
         [Inject] public IDispatcher? Dispatcher { get; set; }
         [Inject] public IState<ServicesState>? ServicesState { get; set; }
+        [Inject] public IServiceProvider ServiceProvider { get; set; }
 
         record GrpcOperationMethod(MethodInfo Method, GrpcOperationType OperationType, Type RequestMessageType, Type ResponseMessageType);
 
@@ -95,6 +97,8 @@ namespace GrpcBrowser.Pages
 
         protected override void OnParametersSet()
         {
+            var services = ServiceProvider.GetServices<object>();
+
             var protoFileGrpcServices = GrpcBrowserConfiguration.ProtoGrpcClients.Select(service => ToGrpcService(service.Value.Type, GrpcServiceImplementationType.ProtoFile));
 
             var codeFirstGrpcServices = GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces.Select(service => ToGrpcService(service.Value.Type, GrpcServiceImplementationType.CodeFirst));

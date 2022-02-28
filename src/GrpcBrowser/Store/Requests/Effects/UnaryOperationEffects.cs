@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Fluxor;
 using Grpc.Core;
 using Grpc.Net.Client;
-using GrpcBrowser.Configuration.RequestInterceptors;
 using GrpcBrowser.Infrastructure;
 using GrpcBrowser.Store.Services;
+using Microsoft.Extensions.DependencyInjection;
 using ProtoBuf.Grpc;
 
 namespace GrpcBrowser.Store.Requests.Effects
@@ -14,10 +14,12 @@ namespace GrpcBrowser.Store.Requests.Effects
     public class UnaryOperationEffects
     {
         private readonly GrpcChannelUrlProvider _urlProvider;
+        private readonly IServiceProvider _serviceProvider;
 
-        public UnaryOperationEffects(GrpcChannelUrlProvider urlProvider)
+        public UnaryOperationEffects(GrpcChannelUrlProvider urlProvider, IServiceProvider serviceProvider)
         {
             _urlProvider = urlProvider;
+            _serviceProvider = serviceProvider;
         }
 
         private static async Task InvokeCodeFirstService(GrpcChannel channel, CallUnaryOperation action, object requestParameter, CallOptions callOptions, IDispatcher dispatcher)
@@ -50,11 +52,18 @@ namespace GrpcBrowser.Store.Requests.Effects
         [EffectMethod]
         public async Task Handle(CallUnaryOperation action, IDispatcher dispatcher)
         {
+            try
+            {
+                var client = _serviceProvider.GetRequiredService(action.Service.ServiceType);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // No registered service
+            }
+
             var channel = GrpcChannel.ForAddress(_urlProvider.BaseUrl);
 
             var requestParameter = GrpcUtils.GetRequestParameter(action.RequestParameterJson, action.Operation.RequestType);
-
-            action = await action.ApplyAllInterceptors();
 
             var callOptions = GrpcUtils.GetCallOptions(action.Headers, CancellationToken.None);
 

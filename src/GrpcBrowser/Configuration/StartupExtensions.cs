@@ -30,7 +30,6 @@ namespace GrpcBrowser.Configuration
         {
             var options = new GrpcBrowserOptions();
             optionsAction?.Invoke(options);
-            GrpcBrowserConfiguration.GlobalRequestInterceptors = GrpcBrowserConfiguration.GlobalRequestInterceptors.AddRange(options.GlobalRequestInterceptors);
 
             app.UseWhen(ctx => ctx.Request.Path.StartsWithSegments("/grpc"), tools =>
             {
@@ -58,7 +57,7 @@ namespace GrpcBrowser.Configuration
                 throw new ArgumentException($"A proto-first service with the type {typeof(TClient).Name} has already been configured");
             }
 
-            GrpcBrowserConfiguration.ProtoGrpcClients = GrpcBrowserConfiguration.ProtoGrpcClients.Add(typeof(TClient).FullName, new ConfiguredGrpcClient(typeof(TClient), options.Interceptors.ToImmutableList()));
+            GrpcBrowserConfiguration.ProtoGrpcClients = GrpcBrowserConfiguration.ProtoGrpcClients.Add(typeof(TClient).FullName, new ConfiguredGrpcClient(typeof(TClient)));
 
             return builder;
         }
@@ -87,7 +86,7 @@ namespace GrpcBrowser.Configuration
                     $"To add your code-first service to GrpcBrowser, you must provide your GRPC service's interface. '{typeof(TServiceInterface).Name}' does not have the attribute '{nameof(ServiceAttribute)}' or '{nameof(ServiceContractAttribute)}', which is required for code-first GRPC services");
             }
 
-            GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces = GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces.Add(typeof(TServiceInterface).FullName, new ConfiguredGrpcClient(typeof(TServiceInterface), options.Interceptors.ToImmutableList()));
+            GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces = GrpcBrowserConfiguration.CodeFirstGrpcServiceInterfaces.Add(typeof(TServiceInterface).FullName, new ConfiguredGrpcClient(typeof(TServiceInterface)));
 
             return builder;
         }

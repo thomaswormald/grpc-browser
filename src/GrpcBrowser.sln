@@ -15,6 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FxService", "Samples\FxServ
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{9C2D266F-7FA6-47E1-9259-8562777CE962}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E82DF607-D717-4AD9-93C3-A095C9B84D55}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OAuthSecuredGrpcService", "OAuthSecuredGrpcService\OAuthSecuredGrpcService.csproj", "{860B6910-103A-416E-8189-CAB0AED7FBB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +48,10 @@ Global
 		{55AF171D-7551-405D-8D2A-DD5A11281FCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55AF171D-7551-405D-8D2A-DD5A11281FCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55AF171D-7551-405D-8D2A-DD5A11281FCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{860B6910-103A-416E-8189-CAB0AED7FBB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{860B6910-103A-416E-8189-CAB0AED7FBB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{860B6910-103A-416E-8189-CAB0AED7FBB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{860B6910-103A-416E-8189-CAB0AED7FBB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +61,7 @@ Global
 		{968CC8A8-3989-4697-BB50-E47010FC8825} = {9C2D266F-7FA6-47E1-9259-8562777CE962}
 		{E2913EAD-E188-4F09-826C-D7A01462E15F} = {9C2D266F-7FA6-47E1-9259-8562777CE962}
 		{55AF171D-7551-405D-8D2A-DD5A11281FCD} = {9C2D266F-7FA6-47E1-9259-8562777CE962}
+		{860B6910-103A-416E-8189-CAB0AED7FBB6} = {9C2D266F-7FA6-47E1-9259-8562777CE962}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D3F6AC12-10F1-4985-BBB6-9B78DB7CEA5E}

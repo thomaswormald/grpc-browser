@@ -61,5 +61,13 @@ Example projects for .NET Core 3.1, .NET 5.0 and .NET 6.0 can be found in the `/
 ### Error when navigating to `/grpc`
 Make sure that your service SDK type is Microsoft.NET.Sdk.Web. This is required because GrpcBrowser adds server-side Blazor to your project. In the `.csproj` file, set the Project Sdk like this: `<Project Sdk="Microsoft.NET.Sdk.Web">`
 
+### Missing Client for Proto-First Service
+Your proto file must be set to generate both client and server classes. To do this, edit your project file and update the reference to the proto file to generate both services, like this:
+```
+  <ItemGroup>
+    <Protobuf Include="Protos\greet.proto" GrpcServices="Both" />
+  </ItemGroup>
+```
+
 ## Implementation Detail
 The service reflects over the types provided to `AddToGrpcBrowserWithClient` or `AddToGrpcBrowserWithClient` in order to determine the available operations, meaning that gRPC reflection is not required. Because we use server-side Blazor, the request execution is done from the server, meaning that gRPC web is not required.
