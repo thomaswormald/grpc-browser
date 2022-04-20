@@ -31,7 +31,14 @@ namespace GrpcBrowser
 
             if (service.ImplementationType == GrpcServiceImplementationType.CodeFirst)
             {
-                methodInfo = service.ServiceType.GetMethod(operation.Name);
+                try
+                {
+                    methodInfo = service.ServiceType.GetMethod(operation.Name);
+                }
+                catch (AmbiguousMatchException)
+                {
+                    // ToDo handle this when multiple methods with the same name exist
+                }
             }
             else if (service.ImplementationType == GrpcServiceImplementationType.ProtoFile)
             {

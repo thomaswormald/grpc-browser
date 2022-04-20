@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SampleGrpcService.netcore31.Services.CodeFirst
@@ -31,6 +32,13 @@ namespace SampleGrpcService.netcore31.Services.CodeFirst
     public interface ICodeFirstGreeterService
     {
         /// <summary>
+        /// A Unary parameterles operation takes no parameters, and returns a response
+        /// </summary>
+        /// <returns></returns>
+        [OperationContract]
+        Task<SampleCodeFirstReply> UnaryParameterlessOperation();
+
+        /// <summary>
         /// A Unary Void operation takes a single request, and does not return a response
         /// </summary>
         [OperationContract]
@@ -44,6 +52,15 @@ namespace SampleGrpcService.netcore31.Services.CodeFirst
         /// <returns></returns>
         [OperationContract]
         Task<SampleCodeFirstReply> UnaryOperation(SampleCodeFirstRequest request, CallContext context = default);
+
+        /// <summary>
+        /// A Unary operation takes a single request and a cancellation token, and returns a single response
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [OperationContract]
+        Task<SampleCodeFirstReply> UnaryOperationWithCancellationToken(SampleCodeFirstRequest request, CancellationToken token = default);
 
         /// <summary>
         /// A Server Streaming operation takes a single request, and returns a stream of zero or more responses
@@ -111,6 +128,17 @@ namespace SampleGrpcService.netcore31.Services.CodeFirst
                     obs.OnNext(new SampleCodeFirstReply() { Content = $"You have sent {messageCount} requests so far. The most recent request content was {message.Content}" });
                 }
             }).ToAsyncEnumerable();
+        }
+
+        public Task<SampleCodeFirstReply> UnaryParameterlessOperation()
+        {
+            return Task.FromResult(new SampleCodeFirstReply { Content = $"Your request content was nothing, as there is no request parameter." });
+
+        }
+
+        public Task<SampleCodeFirstReply> UnaryOperationWithCancellationToken(SampleCodeFirstRequest request, CancellationToken token = default)
+        {
+            return Task.FromResult(new SampleCodeFirstReply { Content = $"Your request content was '{request.Content}'" });
         }
     }
 }

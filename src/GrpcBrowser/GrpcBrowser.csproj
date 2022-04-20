@@ -24,6 +24,7 @@
     <PackageReference Include="Grpc.Net.Client" Version="2.40.0" />
     <PackageReference Include="MudBlazor" Version="2.0.7" />
     <PackageReference Include="Namotion.Reflection" Version="2.0.10" />
+    <PackageReference Include="OneOf" Version="3.0.216" />
     <PackageReference Include="protobuf-net.Grpc" Version="1.0.152" />
     <PackageReference Include="System.Linq.Async" Version="5.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
