@@ -27,6 +27,13 @@ public class SampleCodeFirstReply
 public interface ICodeFirstGreeterService
 {
     /// <summary>
+    /// A Unary parameterles operation takes no parameters, and returns a response
+    /// </summary>
+    /// <returns></returns>
+    [OperationContract]
+    Task<SampleCodeFirstReply> UnaryParameterlessOperation();
+
+    /// <summary>
     /// A Unary Void operation takes a single request, and does not return a response
     /// </summary>
     [OperationContract]
@@ -40,6 +47,16 @@ public interface ICodeFirstGreeterService
     /// <returns></returns>
     [OperationContract]
     Task<SampleCodeFirstReply> UnaryOperation(SampleCodeFirstRequest request, CallContext context = default);
+
+    /// <summary>
+    /// A Unary operation takes a single request and a cancellation token, and returns a single response
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    [OperationContract]
+    Task<SampleCodeFirstReply> UnaryOperationWithCancellationToken(SampleCodeFirstRequest request, CancellationToken token = default);
+
 
     /// <summary>
     /// A Server Streaming operation takes a single request, and returns a stream of zero or more responses
@@ -108,4 +125,16 @@ public class CodeFirstGreeterService : ICodeFirstGreeterService
             }
         }).ToAsyncEnumerable();
     }
+
+    public Task<SampleCodeFirstReply> UnaryParameterlessOperation()
+    {
+        return Task.FromResult(new SampleCodeFirstReply { Content = $"Your request content was nothing, as there is no request parameter." });
+
+    }
+
+    public Task<SampleCodeFirstReply> UnaryOperationWithCancellationToken(SampleCodeFirstRequest request, CancellationToken token = default)
+    {
+        return Task.FromResult(new SampleCodeFirstReply { Content = $"Your request content was '{request.Content}'" });
+    }
+
 }

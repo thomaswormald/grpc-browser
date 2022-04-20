@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ProtoBuf.Grpc.Internal;
+using System.Threading;
 
 namespace GrpcBrowser.Pages
 {
@@ -17,7 +19,7 @@ namespace GrpcBrowser.Pages
         [Inject] public IDispatcher? Dispatcher { get; set; }
         [Inject] public IState<ServicesState>? ServicesState { get; set; }
 
-        record GrpcOperationMethod(MethodInfo Method, GrpcOperationType OperationType, Type RequestMessageType, Type ResponseMessageType);
+        record GrpcOperationMethod(MethodInfo Method, GrpcOperationType OperationType, Type? RequestMessageType, Type ResponseMessageType);
 
         private static GrpcOperationMethod DetermineOperationTypeFromProtoFirstSeviceMethod(MethodInfo method)
         {
@@ -65,7 +67,7 @@ namespace GrpcBrowser.Pages
                 GrpcOperationType.Duplex => (method.GetParameters()[0].ParameterType.GetGenericArguments()[0], method.ReturnType.GetGenericArguments()[0]),
                 GrpcOperationType.ClientStreaming => (method.GetParameters()[0].ParameterType.GetGenericArguments()[0], method.ReturnType.GetGenericArguments()[0]),
                 GrpcOperationType.ServerStreaming => (method.GetParameters()[0].ParameterType, method.ReturnType.GetGenericArguments()[0]),
-                GrpcOperationType.Unary => (method.GetParameters()[0].ParameterType, method.ReturnType.IsGenericType ? method.ReturnType.GetGenericArguments()[0] : method.ReturnType),
+                GrpcOperationType.Unary => (method.GetParameters().Length > 0 ? method.GetParameters()[0].ParameterType : typeof(Empty), method.ReturnType.IsGenericType ? method.ReturnType.GetGenericArguments()[0] : method.ReturnType),
             };
 
             return new GrpcOperationMethod(method, type, requestMessageType, responseMessageType);
@@ -80,10 +82,12 @@ namespace GrpcBrowser.Pages
                 serviceType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                     .Where(m => !m.IsConstructor)
                     .Where(m => m.GetParameters().Length <= 2)
-                    .Where(m => m.GetParameters()[0].ParameterType == typeof(CallOptions) ||
+                    .Where(m => m.GetParameters().Length == 0 ||
+                                m.GetParameters()[0].ParameterType == typeof(CallOptions) ||
                                 (m.GetParameters().Length == 2 &&
                                     (m.GetParameters()[1].ParameterType == typeof(CallContext) ||
-                                     m.GetParameters()[1].ParameterType == typeof(CallOptions))))
+                                     m.GetParameters()[1].ParameterType == typeof(CallOptions) ||
+                                     m.GetParameters()[1].ParameterType == typeof(CancellationToken))))
                     .Select(method => implementationType == GrpcServiceImplementationType.CodeFirst ? DetermineOperationFromCodeFirstService(method) : DetermineOperationTypeFromProtoFirstSeviceMethod(method))
                     .GroupBy(method => RemoveAsyncFromCodeFirstMethodName(method.Method.Name, implementationType))
                     .Select(method => method.First())

@@ -1,4 +1,6 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+﻿@using GrpcBrowser.Store.Services
+@using ProtoBuf.Grpc.Internal
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <style>
     .header-input-box {
@@ -18,8 +20,11 @@
         <RequestResponseTypes Operation="@Operation" />
     </div>
 
-    <div class="mt-4">Request Body</div>
-    <MudTextField T="string" Variant="Variant.Filled" Lines="@_requestTextFieldLines" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />
+    @if (@Operation.RequestType != typeof(Empty))
+    {
+        <div class="mt-4">Request Body</div>
+        <MudTextField T="string" Variant="Variant.Filled" Lines="@_requestTextFieldLines" @bind-Value="@_requestJson" Style="@ServiceView.jsonTextBoxStyle" />
+    }
 
     <div class="mt-2">
         @foreach (var header in _headers)

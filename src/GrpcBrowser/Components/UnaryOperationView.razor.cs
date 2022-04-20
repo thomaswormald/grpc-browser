@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using BlazorDownloadFile;
+using ProtoBuf.Grpc.Internal;
 
 namespace GrpcBrowser.Components
 {
@@ -30,6 +31,7 @@ namespace GrpcBrowser.Components
         {
             var autoFixture = new Fixture();
             autoFixture.Register<string>(() => "string");
+            autoFixture.Register<Empty>(() => null);
             var randomInstanceOfRequestObject =
                 autoFixture.Create(Operation.RequestType, new SpecimenContext(autoFixture));
 
