@@ -6,7 +6,7 @@
     <OutputType>Library</OutputType>
 	<LangVersion>10</LangVersion>
 	<IsPackable>true</IsPackable>
-	<Version>1.3.2</Version>
+	<Version>1.3.3</Version>
 	<Authors>Thomas Wormald</Authors>
 	<Description>Extends your application with a web UI for browsing and executing gRPC operations</Description>
 	<PackageTags>grpc;browser;rpc;</PackageTags>
